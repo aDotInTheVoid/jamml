@@ -17,17 +17,25 @@ pub type Mat<T> = Vec<Vec<T>>;
 /// [a, b, c] ->  [b]
 ///               [c]]
 /// ```
-pub fn vec_to_column_mat<T: num::Num>(v: Vec<T>) -> Mat<T> {
+pub fn vec_to_column_mat<T: num::Num>(v: &Vec<T>) -> Mat<T> 
+where
+    // TODO: Cleanup. What i realy nead is for the `num` crate to get their shit together
+    // so num::Num includes shit like std::ops::Mul. Until then, I may need to make an alias.
+    T: std::ops::AddAssign,
+    T: num::Num,
+    T: std::ops::Mul,
+    T: Copy,
+{
     let mut m: Mat<T> = Vec::new();
 
     for i in v {
-        m.push(vec![i]);
+        m.push(vec![*i]);
     }
     return m;
 }
 
-///Calculates the dot product of two Vectors of Numbers.
-pub fn dot_product<T>(a: Vec<T>, b: Vec<T>) -> T
+/// Calculates the dot product of two Vectors of Numbers.
+pub fn dot_product<T>(a: &Vec<T>, b: &Vec<T>) -> T
 where
     // TODO: Cleanup. What i realy nead is for the `num` crate to get their shit together
     // so num::Num includes shit like std::ops::Mul. Until then, I may need to make an alias.
@@ -42,6 +50,30 @@ where
     }
     return acc;
 }
+
+
+fn isvalid<T>(m: &Mat<T>) -> bool{
+    let l = m[0].len();
+    for i in m.iter() {
+        if i.len() != l {
+            return false
+        }
+    }
+    return true;
+}
+
+
+fn dims<T>(m: &Mat<T>) -> (usize, usize){
+    assert!(isvalid(&m));
+    return(m.len(), *(&(m[0]).len()))
+}
+
+
+/// Calculates the transpose of a matrix
+// pub fn transpose<T>(&a: Mat<T>) -> Mat<T>{
+    
+// }
+
 
 #[cfg(test)]
 mod tests {
@@ -68,20 +100,20 @@ mod tests {
 
     #[test]
     fn column_vector_initialiser() {
-        let v: Mat<i32> = vec_to_column_mat(vec![1, 2, 3]);
+        let v: Mat<i32> = vec_to_column_mat(&vec![1, 2, 3]);
         assert_eq!(v, vec![vec![1], vec![2], vec![3]])
     }
 
     #[test]
     fn dot_product_2_elem() {
-        assert_eq!(dot_product(vec![2, 5], vec![3, 1]), 11);
-        assert_eq!(dot_product(vec![4, 3], vec![3, 5]), 27);
+        assert_eq!(dot_product(&vec![2, 5], &vec![3, 1]), 11);
+        assert_eq!(dot_product(&vec![4, 3], &vec![3, 5]), 27);
     }
 
     #[test]
     fn dot_product_3_elem() {
-        assert_eq!(dot_product(vec![1, 3, -5], vec![4, -2, -1]), 3);
-        assert_eq!(dot_product(vec![3, 1, 8], vec![4, 2, 3]), 38);
-        assert_eq!(dot_product(vec![2, 5, -2], vec![1, 8, -3]), 48);
+        assert_eq!(dot_product(&vec![1, 3, -5], &vec![4, -2, -1]), 3);
+        assert_eq!(dot_product(&vec![3, 1, 8], &vec![4, 2, 3]), 38);
+        assert_eq!(dot_product(&vec![2, 5, -2], &vec![1, 8, -3]), 48);
     }
 }
