@@ -20,3 +20,4 @@ deploy:
   github_token: $GH_REPO_TOKEN
   on:
     branch: master
+    rust: stable
