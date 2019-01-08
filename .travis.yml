@@ -8,10 +8,11 @@ matrix:
   allow_failures:
     - rust: nightly
   fast_finish: true
-
+env:
+  global:
+    secure: "vzpQIj0pyDIEtXmE3hF4BSzWiR+V1ewZ5cu3HxKlqWC+bCDbKRM86NMxETG0P5c3YMEFMzGco3OvWxGcqYuXUJMa/8cLfoLHnq1soyMr4gBVX05jbkwtLIqx2KxRSwp92qQfruWVe6zL87+w9cntOFSBzTsI3Sr/EXqlF5Js+geEkElRinxlwFWk4hkszkYEceXrvCi3/jCsYGXHwQUv4whcrOpoJXBIoVTqn1n7uORa/ukNF5aO6eS9jjVznEWGvrPfRyDnC53xUol0N247cy1o/WheD73OPdzs850IAiSbVu4g17EYpvAoQsCCNOnpeWQlFTKIuHm/EpyrwD+3TabJaG2ZDcNorPsMhcJc/uXfmD62IMhmAZpWgQe091Jt97sOwMP38adOV9ETacdkc/1u4Peir7Aq/mpbk6JwTWHGLRaq+HVX0gq2pae8KI32qNc0nfay2On6f7S4nZUgCOsavcAC7MYeuZfP0dG7Ou4IW5DNx1/kvN5muwfTIS0ybwRSxPUJP3HawQ3Ith6CxAVFcaD0dnvu/EenEI3Y20AVosaWFflX6b72iW7J3pWKn4SWPDFWYZhfzlMWkY6tx8AkEz905V3lQh0kb2NreR+1jWIC1WOti0RZmxq5RPAl5jRF2uF9Tt8LJ3lJ6wKwRCvHDsSXCYbSo30u1IKYkmI="
 before_deploy:
 - cargo doc
-
 deploy:
   provider: pages
   skip_cleanup: true
