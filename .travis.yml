@@ -18,3 +18,6 @@ deploy:
   on:
     branch: master
     rust: stable
+env:
+  global:
+    secure: M2zW53kSaXmPjuhuz8XHmI4nxNDdBkhzjnc0AOukyAj/QVk738q26rDxYH8Bo1THXE94ULlDe/1uhWF9nultzdrgu+w/FOVtdNZnoXjN/4p8zLhdPEwDKpEkjclgeesoE5+hFixTZAE3gZwIg1UgR3su6pVfk6IDs8Hl/WRcYo7qJMHuZPxJ2uN9t/n/9kNFk4xV9vYzVRiHJhl5YsTqUdnjH+w8nAx7+U4/SKIItqapYxmubI9N8WJQmZo8vfKFaeIxQM7JLBMT1iLa+bBGZyTVrSCZwcxFGEAPu+GrzAS4ssJ/10+shq3bJskVqumlvljf+ie6tA/XW6fX+bfORySP1eCO/foXYzozzyK0r38FzPsvotGN1fR12rvzIcTe3EsYwtphj2v/7WF64F1LUAcRPhcTG3JdqiCy77/K0q/K9PCJHCaMDhGgsKasEnqRfXd98uNOqTu1WVDCA/GkdMbZdsNZMuU7Jnj1GDi100lR4Td52+3IMBiSdqUFGmPIXtviLj1dK13wabhjEWFpxjbfKw/P3ynV/BKCvWt7m6JY09L0QgO2l16JpOYAeEQ1vde81W0G4KPKteAIa97Zvt1q+owc+GvCbNJHqdOK5d6QxGghmq5BpsOynfLUd+ElpD2lN7OLXqS30vCa4kaHY+haxXJJP9eGZjnjDxE4k7M=
