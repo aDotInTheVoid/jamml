@@ -12,6 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Provides functions to create matricies
+//!
+//! ```
+//! # use jamml::initializers::vec_to_column_mat;
+//! let x = vec_to_column_mat(&vec![1, 2, 3]);
+//! let y = vec![vec![1],
+//!              vec![2],
+//!              vec![3]];
+//!
+//! assert_eq!(x, y);
+//! ```
+
 extern crate num_traits;
 use num_traits::NumAssign;
 

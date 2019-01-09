@@ -12,6 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! # JAMML: Just Another Matrix Math Library
+//!
+//! `core` contains core functionality, like matrix definitions
+//!
+//! `initializers` contains functionality create matrices
+//!
+//! `ops` contains functions that operate on matrices
+
 pub mod core;
 pub mod initializers;
 pub mod ops;

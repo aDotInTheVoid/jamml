@@ -12,6 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Defines Functions that opperate on matrices
+//!
+//! ```
+//! # use jamml::ops::transpose;
+//! # use jamml::core::Mat;
+//! let m: Mat<i32> = vec![vec![1, 2, 3],
+//!                        vec![4, 5, 6],
+//!                        vec![7, 8, 9]];
+//!
+//! let t: Mat<i32> = vec![vec![1, 4, 7],
+//!                        vec![2, 5, 8],
+//!                        vec![3, 6, 9]];
+//!
+//! assert_eq!(m, transpose(&t));
+//! ```
+
 extern crate num_traits;
 use num_traits::NumAssign;
 

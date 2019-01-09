@@ -12,6 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Core Matrix Deffinions and auxilarry functions.
+//!
+//! ```
+//! # use jamml::core::*;
+//! let m: Mat<i32> = vec![vec![1, 2, 3],
+//!                        vec![4, 5, 6],
+//!                        vec![7, 8, 9]];
+//!
+//! assert!(isvalid(&m));
+//! assert_eq!(dims(&m), (3, 3));
+
 extern crate num_traits;
 use num_traits::NumAssign;
 
