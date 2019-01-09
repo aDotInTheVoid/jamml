@@ -1,9 +1,9 @@
 [package]
-name = "safe_matmul"
+name = "jamml"
 version = "0.1.0"
 authors = ["Nixon <nixon.emoony@gmail.com>"]
 edition = "2018"
-publish = false
+
 license = "Apache-2.0"
 
 [dependencies]
@@ -13,7 +13,7 @@ rand = "0.6.1"
 
 
 [lib]
-name = "matlib"
+name = "jamml"
 path = "src/lib.rs"
 
 [badges]
