@@ -1,6 +1,6 @@
 [package]
 name = "jamml"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Nixon <nixon.emoony@gmail.com>"]
 edition = "2018"
 
@@ -22,6 +22,6 @@ name = "jamml"
 path = "src/lib.rs"
 
 [badges]
-travis-ci = { repository = "aDotInTheVoid/safe_matmul", branch = "master" }
-codecov = { repository = "aDotInTheVoid/safe_matmul", branch = "master", service = "github" }
+travis-ci = { repository = "aDotInTheVoid/jamml", branch = "master" }
+codecov = { repository = "aDotInTheVoid/jamml", branch = "master", service = "github" }
 
