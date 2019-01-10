@@ -48,10 +48,17 @@ pub fn isvalid<T: Copy + NumAssign>(m: &Mat<T>) -> bool {
 /// Return the dimensions of a matrix.
 ///
 /// Panicks if the matrix isn't valid
-pub fn dims<T: NumAssign + Copy>(m: &Mat<T>) -> (usize, usize) {
+pub fn dims<T: NumAssign + Copy>(m: &Mat<T>) -> Result<(usize, usize), MatrixError> {
     assert!(isvalid(&m), MAT_INVALID_ERR_STR);
     return (m.len(), (m[0]).len());
 }
+
+pub enum MatrixError{
+    NotSquare,
+    InvalidDims
+}
+
+
 
 #[cfg(test)]
 mod tests {

@@ -31,7 +31,7 @@ extern crate rand;
 // Dont remove `Rng` useage, it breaks stuff.
 use rand::{thread_rng, Rng};
 
-use crate::core::Mat;
+use crate::core::{Mat, MatrixError};
 
 /// Creates a matrix for a column vector from `&Vec v`
 ///
@@ -89,7 +89,7 @@ pub fn one_mat<T: NumAssign + Copy>(m: usize, n: usize) -> Mat<T> {
 ///              vec![7, 7]];
 /// assert_eq!(x, y);
 /// ```
-pub fn n_mat<T: NumAssign + Copy>(m: usize, n: usize, x: T) -> Mat<T> {
+pub fn n_mat<T: NumAssign + Copy>(m: usize, n: usize, x: T) -> Option<Mat<T>, MatrixError> {
     //TODO: Return result or use non zero type
     assert!(m != 0 && n != 0);
     // I think `vec!` allocs enough capacity

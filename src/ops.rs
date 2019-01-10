@@ -32,10 +32,10 @@ extern crate num_traits;
 use num_traits::NumAssign;
 
 use crate::core;
-use crate::core::{Mat, dims};
+use crate::core::{Mat, dims, MatrixError};
 
 /// Calculates the dot product of two Vectors of Numbers.
-pub fn dot_product<T: NumAssign + Copy>(a: &Vec<T>, b: &Vec<T>) -> T {
+pub fn dot_product<T: NumAssign + Copy>(a: &Vec<T>, b: &Vec<T>) -> Result<T, MatrixError> {
     let mut acc: T = T::zero();
     assert_eq!(a.len(), b.len());
     for (av, bv) in a.iter().zip(b.iter()) {
