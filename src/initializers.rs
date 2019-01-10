@@ -47,6 +47,29 @@ pub fn vec_to_column_mat<T: NumAssign + Copy>(v: &Vec<T>) -> Mat<T> {
     return m;
 }
 
+/// Creates a `m` by `n` matrix of type `T`, where each element is `T::zero()`
+pub fn zero_mat<T: NumAssign + Copy>(m: usize, n:usize) -> Mat<T>{
+    mat_from_dims(m, n, T::zero())
+}
+
+/// Creates a `m` by `n` matrix of type `T`, where each element is `T::one()`
+pub fn one_mat<T: NumAssign + Copy>(m: usize, n:usize) -> Mat<T>{
+    mat_from_dims(m, n, T::one())
+}
+
+/// Creates a `m` by `n` matrix of type `T`, where each element is `x`
+pub fn mat_from_dims<T: NumAssign + Copy>(m: usize, n:usize, x:T) -> Mat<T>{
+        //TODO: Return result or use non zero type
+    assert!(m!=0 && n != 0);
+    //TODO: Initialise vector with enough capacity
+    let mut r: Mat<T> = Vec::new();
+    for _ in 0..m {
+        r.push(vec![x; n]);
+    }
+    return r;
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
