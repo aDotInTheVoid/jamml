@@ -33,7 +33,7 @@ use rand::{thread_rng, Rng};
 
 use crate::core::Mat;
 
-/// Converts a vector of numbers to a matrix of a column vector.
+/// Creates a matrix for a column vector from `&Vec v` 
 ///
 /// Essensialt we take each element in the input vector and put it into its own vector,
 /// before stringing them together.
@@ -52,16 +52,43 @@ pub fn column_mat<T: NumAssign + Copy>(v: &Vec<T>) -> Mat<T> {
 }
 
 /// Creates a `m` by `n` matrix of type `T`, where each element is `T::zero()`
+/// 
+/// ```rust
+/// # use jamml::initializers::zero_mat;
+/// let x = zero_mat::<i32>(3, 2);
+/// let y = vec![vec![0, 0],
+///              vec![0, 0],
+///              vec![0, 0]];
+/// assert_eq!(x, y);
+/// ```
 pub fn zero_mat<T: NumAssign + Copy>(m: usize, n: usize) -> Mat<T> {
     n_mat(m, n, T::zero())
 }
 
 /// Creates a `m` by `n` matrix of type `T`, where each element is `T::one()`
+/// 
+/// ```rust
+/// # use jamml::initializers::one_mat;
+/// let x = one_mat::<i32>(3, 2);
+/// let y = vec![vec![1, 1],
+///              vec![1, 1],
+///              vec![1, 1]];
+/// assert_eq!(x, y)
+/// ```
 pub fn one_mat<T: NumAssign + Copy>(m: usize, n: usize) -> Mat<T> {
     n_mat(m, n, T::one())
 }
 
 /// Creates a `m` by `n` matrix of type `T`, where each element is `x`
+/// 
+/// ```rust
+/// # use jamml::initializers::n_mat;
+/// let x = n_mat(3, 2, 7);
+/// let y = vec![vec![7, 7],
+///              vec![7, 7],
+///              vec![7, 7]];
+/// assert_eq!(x, y);
+/// ```
 pub fn n_mat<T: NumAssign + Copy>(m: usize, n: usize, x: T) -> Mat<T> {
     //TODO: Return result or use non zero type
     assert!(m != 0 && n != 0);
@@ -71,6 +98,16 @@ pub fn n_mat<T: NumAssign + Copy>(m: usize, n: usize, x: T) -> Mat<T> {
 }
 
 /// Creates a `m` by `m` identity matrix of type `T`
+/// 
+/// ```rust
+/// # use jamml::initializers::identity_mat;
+/// let x = identity_mat::<i32>(4);
+/// let y = vec![vec![1, 0, 0, 0],
+///              vec![0, 1, 0, 0],
+///              vec![0, 0, 1, 0],
+///              vec![0, 0, 0, 1]];
+/// assert_eq!(x, y);
+/// ```
 pub fn identity_mat<T: NumAssign + Copy>(m: usize) -> Mat<T> {
     let mut r = zero_mat(m, m);
     for i in 0..m {
@@ -79,6 +116,19 @@ pub fn identity_mat<T: NumAssign + Copy>(m: usize) -> Mat<T> {
     return r;
 }
 
+/// Creates a `m` by `n` matrix of by using function `f` to determine each element.
+/// 
+/// `f` shound be a function that takes no arguments and return `T`
+/// 
+/// ```rust
+/// # use jamml::initializers::fn_mat;
+/// let x = fn_mat(4, 2, ||{2*4});
+/// let y = vec![vec![8, 8],
+///              vec![8, 8],
+///              vec![8, 8],
+///              vec![8, 8]];
+/// assert_eq!(x, y);
+/// ```
 pub fn fn_mat<T: NumAssign + Copy, F: Fn() -> T>(m: usize, n: usize, f: F) -> Mat<T> {
     let mut r = zero_mat(m, n);
     for i in 0..m {
@@ -89,6 +139,9 @@ pub fn fn_mat<T: NumAssign + Copy, F: Fn() -> T>(m: usize, n: usize, f: F) -> Ma
     return r;
 }
 
+/// Creates a `m` by `n` matrix of random values between `min` and `max`
+/// 
+/// Panics if `min >= max`
 pub fn ranged_rand_mat<T>(m: usize, n: usize, min: T, max: T) -> Mat<T>
 where
     T: NumAssign + Copy + rand::distributions::uniform::SampleUniform,
@@ -96,19 +149,21 @@ where
     fn_mat(m, n, || rand::thread_rng().gen_range(min, max))
 }
 
+/// Creates a `m` by `n` matrix of random values between `val` and `-val`
 pub fn ranged_rand_around_mat<T>(m: usize, n:usize, val:T) -> Mat<T>
 where
     T: NumAssign + Copy + rand::distributions::uniform::SampleUniform + num_traits::sign::Signed
 {
     let val = val.abs();
-    ranged_rand_mat(m, n, val, -val)
+    ranged_rand_mat(m, n, -val, val)
 }
 
+/// Creates a `m` by `n` matrix of random values between `1` and `-1`
 pub fn one_to_minus_one_mat<T>(m: usize, n:usize) -> Mat<T>
 where
     T: NumAssign + Copy + rand::distributions::uniform::SampleUniform + num_traits::sign::Signed
 {
-    ranged_rand_mat(m, n, T::one(), -T::one())
+    ranged_rand_mat(m, n, -T::one(), T::one())
 }
 
 #[cfg(test)]
@@ -347,7 +402,7 @@ mod tests {
         }
 
         #[test]
-        fn rand_mat() {
+        fn fn_mat_has_right_dims() {
             // TODO: Find a better way to test
             use crate::core::dims;
             let x = fn_mat(2, 2, || thread_rng().gen_range(1, 10));
@@ -366,6 +421,53 @@ mod tests {
                 vec![42, 42, 42, 42, 42, 42],
             ];
             assert_eq!(x, y);
+        }
+
+        #[test]
+        fn ranged_rand_mat_is_ranged () {
+            let x = ranged_rand_mat(10, 10, 0, 10);
+            for i in 0..10{
+                for j in 0..10{
+                    assert!(0 <= x[i][j]);
+                    assert!(x[i][j] <= 10);
+                }
+            }
+        }
+
+        #[test]
+        #[should_panic]
+        fn ranged_rand_mat_panics_on_wrong_order () {
+            ranged_rand_mat(10, 10, 10, 0);
+        }
+
+        #[test]
+        fn ranged_rand_around_mat_is_ranged_around () {
+            let x = ranged_rand_around_mat(10, 10, 10);
+            for i in 0..10{
+                for j in 0..10{
+                    assert!(-10 <= x[i][j]);
+                    assert!(x[i][j] <= 10);
+                }
+            }
+            // Test negitive case
+            let x = ranged_rand_around_mat(10, 10, -10);
+            for i in 0..10{
+                for j in 0..10{
+                    assert!(-10 <= x[i][j]);
+                    assert!(x[i][j] <= 10);
+                }
+            }
+        }
+
+        #[test]
+        fn one_to_minus_one_mat_is_one_to_minus_one () {
+            let x = one_to_minus_one_mat::<f32>(10, 10);
+            for i in 0..10{
+                for j in 0..10{
+                    assert!(-10.0 <= x[i][j]);
+                    assert!(x[i][j] <= 10.0);
+                }
+            }
         }
     }
 }
