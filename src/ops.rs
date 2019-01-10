@@ -51,7 +51,7 @@ pub fn transpose<T: NumAssign + Copy>(a: &Mat<T>) -> Mat<T> {
 
     // Give `r` some capacity
     for _ in 0..n {
-        r.push(vec![T::zero(); m])
+        r.push(vec![T::zero(); m]);
     }
 
     for i in 0..m {
