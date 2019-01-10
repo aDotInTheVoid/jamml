@@ -75,6 +75,16 @@ pub fn identity<T: NumAssign + Copy>(m: usize) -> Mat<T> {
     return r;
 }
 
+pub fn fn_mat<T: NumAssign + Copy, F: Fn() -> T>(m: usize, n:usize, f: F)-> Mat<T>{
+    let mut r = zero_mat(m, n);
+    for i in 0..m{
+        for j in 0..n{
+            r[i][j] = f();
+        }
+    }
+    return r;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -311,6 +321,28 @@ mod tests {
             assert_eq!(i2, identity(2));
             assert_eq!(i3, identity(3));
             assert_eq!(i4, identity(4));
+        }
+
+        #[test]
+        fn rand_mat(){
+            // TODO: Find a better way to test
+            use crate::core::dims;
+            let x = fn_mat(2, 2, ||{thread_rng().gen_range(1, 10)});
+            assert_eq!(dims(&x), (2,2));
+            let y = fn_mat(8, 2, ||{thread_rng().gen::<f32>()});
+            assert_eq!(dims(&y), (8,2));
+        }
+
+        #[test]
+        fn fn_mat_const_fn () {
+            let x = fn_mat(4, 6, ||{42});
+            let y = vec![
+                vec![42, 42, 42, 42, 42, 42],
+                vec![42, 42, 42, 42, 42, 42],
+                vec![42, 42, 42, 42, 42, 42],
+                vec![42, 42, 42, 42, 42, 42],
+            ];
+            assert_eq!(x, y);
         }
     }
 }
