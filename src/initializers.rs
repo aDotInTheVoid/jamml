@@ -67,12 +67,24 @@ pub fn n_mat<T: NumAssign + Copy>(m: usize, n: usize, x: T) -> Mat<T> {
         r.push(vec![x; n]);
     }
     return r;
+
+    // vec![vec![x;n];m]
+}
+
+/// Creates a `m` by `m` identity matrix of type `T`
+pub fn identity<T: NumAssign + Copy>(m: usize) -> Mat<T> {
+    let mut r = zero_mat(m, m);
+    for i in 0..m {
+        r[i][i] = T::one();
+    }
+    return r;
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     extern crate rand;
+    // Dont remove `Rng` useage, it breaks stuff.
     use rand::{thread_rng, Rng};
 
     mod column_vecs {
@@ -283,6 +295,27 @@ mod tests {
                 assert_eq!(one_by_one_by_one, one_mat(3, 3));
                 assert_eq!(one_by_one_by_73, n_mat(3, 3, 73));
             }
+        }
+    }
+
+    mod vario_elem_mat_init {
+        use super::*;
+        #[test]
+        fn identity_one_to_four() {
+            let i1 = vec![vec![1]];
+            let i2 = vec![vec![1, 0], vec![0, 1]];
+            let i3 = vec![vec![1, 0, 0], vec![0, 1, 0], vec![0, 0, 1]];
+            let i4 = vec![
+                vec![1, 0, 0, 0],
+                vec![0, 1, 0, 0],
+                vec![0, 0, 1, 0],
+                vec![0, 0, 0, 1],
+            ];
+
+            assert_eq!(i1, identity(1));
+            assert_eq!(i2, identity(2));
+            assert_eq!(i3, identity(3));
+            assert_eq!(i4, identity(4));
         }
     }
 }
