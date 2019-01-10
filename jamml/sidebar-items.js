@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["core","Core Matrix Deffinions and auxilarry functions."],["initializers","Provides functions to create matricies"],["ops","Defines Functions that opperate on matrices"]]});

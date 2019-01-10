@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["dot_product","Calculates the dot product of two Vectors of Numbers."],["transpose","Calculates the transpose of a matrix"]]});

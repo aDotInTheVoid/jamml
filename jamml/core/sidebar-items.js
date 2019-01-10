@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["dims","Return the dimensions of a matrix."],["isvalid","Finds weather or not each row in a matrix it the same lenght."]],"type":[["Mat","For now, a matrix is a vector of vectors of numbers"]]});
