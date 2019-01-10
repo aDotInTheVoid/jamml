@@ -15,8 +15,8 @@
 //! Provides functions to create matricies
 //!
 //! ```
-//! # use jamml::initializers::vec_to_column_mat;
-//! let x = vec_to_column_mat(&vec![1, 2, 3]);
+//! # use jamml::initializers::column_mat;
+//! let x = column_mat(&vec![1, 2, 3]);
 //! let y = vec![vec![1],
 //!              vec![2],
 //!              vec![3]];
@@ -26,6 +26,10 @@
 
 extern crate num_traits;
 use num_traits::NumAssign;
+
+extern crate rand;
+// Dont remove `Rng` useage, it breaks stuff.
+use rand::{thread_rng, Rng};
 
 use crate::core::Mat;
 
@@ -38,7 +42,7 @@ use crate::core::Mat;
 /// [a, b, c] ->  [b]
 ///               [c]]
 /// ```
-pub fn vec_to_column_mat<T: NumAssign + Copy>(v: &Vec<T>) -> Mat<T> {
+pub fn column_mat<T: NumAssign + Copy>(v: &Vec<T>) -> Mat<T> {
     let mut m: Mat<T> = Vec::new();
 
     for i in v {
@@ -63,11 +67,11 @@ pub fn n_mat<T: NumAssign + Copy>(m: usize, n: usize, x: T) -> Mat<T> {
     assert!(m != 0 && n != 0);
     // I think `vec!` allocs enough capacity
     //TODO: check if vec! is optimised enough
-    vec![vec![x;n];m]
+    vec![vec![x; n]; m]
 }
 
 /// Creates a `m` by `m` identity matrix of type `T`
-pub fn identity<T: NumAssign + Copy>(m: usize) -> Mat<T> {
+pub fn identity_mat<T: NumAssign + Copy>(m: usize) -> Mat<T> {
     let mut r = zero_mat(m, m);
     for i in 0..m {
         r[i][i] = T::one();
@@ -75,28 +79,47 @@ pub fn identity<T: NumAssign + Copy>(m: usize) -> Mat<T> {
     return r;
 }
 
-pub fn fn_mat<T: NumAssign + Copy, F: Fn() -> T>(m: usize, n:usize, f: F)-> Mat<T>{
+pub fn fn_mat<T: NumAssign + Copy, F: Fn() -> T>(m: usize, n: usize, f: F) -> Mat<T> {
     let mut r = zero_mat(m, n);
-    for i in 0..m{
-        for j in 0..n{
+    for i in 0..m {
+        for j in 0..n {
             r[i][j] = f();
         }
     }
     return r;
 }
 
+pub fn ranged_rand_mat<T>(m: usize, n: usize, min: T, max: T) -> Mat<T>
+where
+    T: NumAssign + Copy + rand::distributions::uniform::SampleUniform,
+{
+    fn_mat(m, n, || rand::thread_rng().gen_range(min, max))
+}
+
+pub fn ranged_rand_around_mat<T>(m: usize, n:usize, val:T) -> Mat<T>
+where
+    T: NumAssign + Copy + rand::distributions::uniform::SampleUniform + num_traits::sign::Signed
+{
+    let val = val.abs();
+    ranged_rand_mat(m, n, val, -val)
+}
+
+pub fn one_to_minus_one_mat<T>(m: usize, n:usize) -> Mat<T>
+where
+    T: NumAssign + Copy + rand::distributions::uniform::SampleUniform + num_traits::sign::Signed
+{
+    ranged_rand_mat(m, n, T::one(), -T::one())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    extern crate rand;
-    // Dont remove `Rng` useage, it breaks stuff.
-    use rand::{thread_rng, Rng};
 
     mod column_vecs {
         use super::*;
         #[test]
         fn create_column_vec() {
-            let v: Mat<i32> = vec_to_column_mat(&vec![1, 2, 3]);
+            let v: Mat<i32> = column_mat(&vec![1, 2, 3]);
             assert_eq!(v, vec![vec![1], vec![2], vec![3]])
         }
         #[test]
@@ -108,7 +131,7 @@ mod tests {
                 let c = rng.gen_range(0, 10);
                 let d = rng.gen_range(0, 10);
 
-                let v = vec_to_column_mat(&vec![a, b, c, d]);
+                let v = column_mat(&vec![a, b, c, d]);
                 let w = vec![vec![a], vec![b], vec![c], vec![d]];
                 assert_eq!(v, w);
             }
@@ -121,7 +144,7 @@ mod tests {
                 let b = rng.gen_range(0, 10);
                 let c = rng.gen_range(0, 10);
 
-                let v = vec_to_column_mat(&vec![a, b, c]);
+                let v = column_mat(&vec![a, b, c]);
                 let w = vec![vec![a], vec![b], vec![c]];
                 assert_eq!(v, w);
             }
@@ -133,7 +156,7 @@ mod tests {
                 let a = rng.gen_range(0, 10);
                 let b = rng.gen_range(0, 10);
 
-                let v = vec_to_column_mat(&vec![a, b]);
+                let v = column_mat(&vec![a, b]);
                 let w = vec![vec![a], vec![b]];
                 assert_eq!(v, w);
             }
@@ -144,7 +167,7 @@ mod tests {
             for _ in 1..10 {
                 let a = rng.gen_range(0, 10);
 
-                let v = vec_to_column_mat(&vec![a]);
+                let v = column_mat(&vec![a]);
                 let w = vec![vec![a]];
                 assert_eq!(v, w);
             }
@@ -317,25 +340,25 @@ mod tests {
                 vec![0, 0, 0, 1],
             ];
 
-            assert_eq!(i1, identity(1));
-            assert_eq!(i2, identity(2));
-            assert_eq!(i3, identity(3));
-            assert_eq!(i4, identity(4));
+            assert_eq!(i1, identity_mat(1));
+            assert_eq!(i2, identity_mat(2));
+            assert_eq!(i3, identity_mat(3));
+            assert_eq!(i4, identity_mat(4));
         }
 
         #[test]
-        fn rand_mat(){
+        fn rand_mat() {
             // TODO: Find a better way to test
             use crate::core::dims;
-            let x = fn_mat(2, 2, ||{thread_rng().gen_range(1, 10)});
-            assert_eq!(dims(&x), (2,2));
-            let y = fn_mat(8, 2, ||{thread_rng().gen::<f32>()});
-            assert_eq!(dims(&y), (8,2));
+            let x = fn_mat(2, 2, || thread_rng().gen_range(1, 10));
+            assert_eq!(dims(&x), (2, 2));
+            let y = fn_mat(8, 2, || thread_rng().gen::<f32>());
+            assert_eq!(dims(&y), (8, 2));
         }
 
         #[test]
-        fn fn_mat_const_fn () {
-            let x = fn_mat(4, 6, ||{42});
+        fn fn_mat_const_fn() {
+            let x = fn_mat(4, 6, || 42);
             let y = vec![
                 vec![42, 42, 42, 42, 42, 42],
                 vec![42, 42, 42, 42, 42, 42],
