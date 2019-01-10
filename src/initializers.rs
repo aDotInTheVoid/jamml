@@ -61,14 +61,9 @@ pub fn one_mat<T: NumAssign + Copy>(m: usize, n: usize) -> Mat<T> {
 pub fn n_mat<T: NumAssign + Copy>(m: usize, n: usize, x: T) -> Mat<T> {
     //TODO: Return result or use non zero type
     assert!(m != 0 && n != 0);
-    //TODO: Initialise vector with enough capacity
-    let mut r: Mat<T> = Vec::new();
-    for _ in 0..m {
-        r.push(vec![x; n]);
-    }
-    return r;
-
-    // vec![vec![x;n];m]
+    // I think `vec!` allocs enough capacity
+    //TODO: check if vec! is optimised enough
+    vec![vec![x;n];m]
 }
 
 /// Creates a `m` by `m` identity matrix of type `T`
