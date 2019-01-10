@@ -1,6 +1,6 @@
 [package]
 name = "jamml"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Nixon <nixon.emoony@gmail.com>"]
 edition = "2018"
 
