@@ -134,15 +134,15 @@ mod tests {
     use rand::{thread_rng, Rng};
     #[test]
     fn dot_product_2_elem() {
-        assert_eq!(dot_product(&vec![2, 5], &vec![3, 1]), 11);
-        assert_eq!(dot_product(&vec![4, 3], &vec![3, 5]), 27);
+        assert_eq!(dot_product(&vec![2, 5], &vec![3, 1]).unwrap(), 11);
+        assert_eq!(dot_product(&vec![4, 3], &vec![3, 5]).unwrap(), 27);
     }
 
     #[test]
     fn dot_product_3_elem() {
-        assert_eq!(dot_product(&vec![1, 3, -5], &vec![4, -2, -1]), 3);
-        assert_eq!(dot_product(&vec![3, 1, 8], &vec![4, 2, 3]), 38);
-        assert_eq!(dot_product(&vec![2, 5, -2], &vec![1, 8, -3]), 48);
+        assert_eq!(dot_product(&vec![1, 3, -5], &vec![4, -2, -1]).unwrap(), 3);
+        assert_eq!(dot_product(&vec![3, 1, 8],    &vec![4, 2, 3]).unwrap(), 38);
+        assert_eq!(dot_product(&vec![2, 5, -2],  &vec![1, 8, -3]).unwrap(), 48);
     }
 
     #[test]
@@ -162,7 +162,7 @@ mod tests {
             //  [b d]
             let y = vec![vec![a, c], vec![b, d]];
 
-            assert_eq!(x, transpose(&y));
+            assert_eq!(x, transpose(&y).unwrap());
         }
     }
     #[test]
@@ -189,7 +189,7 @@ mod tests {
             //  [c f i]
             let y = vec![vec![a, d, g], vec![b, e, h], vec![c, f, i]];
 
-            assert_eq!(x, transpose(&y));
+            assert_eq!(x, transpose(&y).unwrap());
         }
     }
     #[test]
@@ -212,7 +212,7 @@ mod tests {
             //  [c f]]
             let y = vec![vec![a, d], vec![b, e], vec![c, f]];
 
-            assert_eq!(x, transpose(&y));
+            assert_eq!(x, transpose(&y).unwrap());
         }
     }
     #[test]
@@ -235,7 +235,7 @@ mod tests {
             //  [b e h]]
             let y = vec![vec![a, d, g], vec![b, e, h]];
 
-            assert_eq!(x, transpose(&y));
+            assert_eq!(x, transpose(&y).unwrap());
         }
     }
 }

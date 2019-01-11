@@ -332,9 +332,9 @@ mod tests {
                 let one_by_one_by_one = vec![vec![1]];
                 let one_by_one_by_73 = vec![vec![73]];
 
-                assert_eq!(one_by_one_by_zero, zero_mat(1, 1));
-                assert_eq!(one_by_one_by_one, one_mat(1, 1));
-                assert_eq!(one_by_one_by_73, n_mat(1, 1, 73));
+                assert_eq!(one_by_one_by_zero, zero_mat(1, 1).unwrap());
+                assert_eq!(one_by_one_by_one, one_mat(1, 1).unwrap());
+                assert_eq!(one_by_one_by_73, n_mat(1, 1, 73).unwrap());
             }
             #[test]
             fn one_by_two() {
@@ -342,9 +342,9 @@ mod tests {
                 let one_by_one_by_one = vec![vec![1; 2]];
                 let one_by_one_by_73 = vec![vec![73; 2]];
 
-                assert_eq!(one_by_one_by_zero, zero_mat(1, 2));
-                assert_eq!(one_by_one_by_one, one_mat(1, 2));
-                assert_eq!(one_by_one_by_73, n_mat(1, 2, 73));
+                assert_eq!(one_by_one_by_zero, zero_mat(1, 2).unwrap());
+                assert_eq!(one_by_one_by_one, one_mat(1, 2).unwrap());
+                assert_eq!(one_by_one_by_73, n_mat(1, 2, 73).unwrap());
             }
             #[test]
             fn one_by_three() {
@@ -352,9 +352,9 @@ mod tests {
                 let one_by_one_by_one = vec![vec![1; 3]];
                 let one_by_one_by_73 = vec![vec![73; 3]];
 
-                assert_eq!(one_by_one_by_zero, zero_mat(1, 3));
-                assert_eq!(one_by_one_by_one, one_mat(1, 3));
-                assert_eq!(one_by_one_by_73, n_mat(1, 3, 73));
+                assert_eq!(one_by_one_by_zero, zero_mat(1, 3).unwrap());
+                assert_eq!(one_by_one_by_one, one_mat(1, 3).unwrap());
+                assert_eq!(one_by_one_by_73, n_mat(1, 3, 73).unwrap());
             }
         }
         mod two_by_n {
@@ -365,9 +365,9 @@ mod tests {
                 let one_by_one_by_one = vec![vec![1]; 2];
                 let one_by_one_by_73 = vec![vec![73]; 2];
 
-                assert_eq!(one_by_one_by_zero, zero_mat(2, 1));
-                assert_eq!(one_by_one_by_one, one_mat(2, 1));
-                assert_eq!(one_by_one_by_73, n_mat(2, 1, 73));
+                assert_eq!(one_by_one_by_zero, zero_mat(2, 1).unwrap());
+                assert_eq!(one_by_one_by_one, one_mat(2, 1).unwrap());
+                assert_eq!(one_by_one_by_73, n_mat(2, 1, 73).unwrap());
             }
             #[test]
             fn two_by_two() {
@@ -375,9 +375,9 @@ mod tests {
                 let one_by_one_by_one = vec![vec![1; 2]; 2];
                 let one_by_one_by_73 = vec![vec![73; 2]; 2];
 
-                assert_eq!(one_by_one_by_zero, zero_mat(2, 2));
-                assert_eq!(one_by_one_by_one, one_mat(2, 2));
-                assert_eq!(one_by_one_by_73, n_mat(2, 2, 73));
+                assert_eq!(one_by_one_by_zero, zero_mat(2, 2).unwrap());
+                assert_eq!(one_by_one_by_one, one_mat(2, 2).unwrap());
+                assert_eq!(one_by_one_by_73, n_mat(2, 2, 73).unwrap());
             }
             #[test]
             fn two_by_three() {
@@ -385,9 +385,9 @@ mod tests {
                 let one_by_one_by_one = vec![vec![1; 3]; 2];
                 let one_by_one_by_73 = vec![vec![73; 3]; 2];
 
-                assert_eq!(one_by_one_by_zero, zero_mat(2, 3));
-                assert_eq!(one_by_one_by_one, one_mat(2, 3));
-                assert_eq!(one_by_one_by_73, n_mat(2, 3, 73));
+                assert_eq!(one_by_one_by_zero, zero_mat(2, 3).unwrap());
+                assert_eq!(one_by_one_by_one, one_mat(2, 3).unwrap());
+                assert_eq!(one_by_one_by_73, n_mat(2, 3, 73).unwrap());
             }
         }
         mod three_by_n {
@@ -398,9 +398,9 @@ mod tests {
                 let one_by_one_by_one = vec![vec![1]; 3];
                 let one_by_one_by_73 = vec![vec![73]; 3];
 
-                assert_eq!(one_by_one_by_zero, zero_mat(3, 1));
-                assert_eq!(one_by_one_by_one, one_mat(3, 1));
-                assert_eq!(one_by_one_by_73, n_mat(3, 1, 73));
+                assert_eq!(one_by_one_by_zero, zero_mat(3, 1).unwrap());
+                assert_eq!(one_by_one_by_one, one_mat(3, 1).unwrap());
+                assert_eq!(one_by_one_by_73, n_mat(3, 1, 73).unwrap());
             }
             #[test]
             fn three_by_two() {
@@ -408,9 +408,9 @@ mod tests {
                 let one_by_one_by_one = vec![vec![1; 2]; 3];
                 let one_by_one_by_73 = vec![vec![73; 2]; 3];
 
-                assert_eq!(one_by_one_by_zero, zero_mat(3, 2));
-                assert_eq!(one_by_one_by_one, one_mat(3, 2));
-                assert_eq!(one_by_one_by_73, n_mat(3, 2, 73));
+                assert_eq!(one_by_one_by_zero, zero_mat(3, 2).unwrap());
+                assert_eq!(one_by_one_by_one, one_mat(3, 2).unwrap());
+                assert_eq!(one_by_one_by_73, n_mat(3, 2, 73).unwrap());
             }
             #[test]
             fn three_by_three() {
@@ -418,9 +418,9 @@ mod tests {
                 let one_by_one_by_one = vec![vec![1; 3]; 3];
                 let one_by_one_by_73 = vec![vec![73; 3]; 3];
 
-                assert_eq!(one_by_one_by_zero, zero_mat(3, 3));
-                assert_eq!(one_by_one_by_one, one_mat(3, 3));
-                assert_eq!(one_by_one_by_73, n_mat(3, 3, 73));
+                assert_eq!(one_by_one_by_zero, zero_mat(3, 3).unwrap());
+                assert_eq!(one_by_one_by_one, one_mat(3, 3).unwrap());
+                assert_eq!(one_by_one_by_73, n_mat(3, 3, 73).unwrap());
             }
         }
     }
@@ -439,25 +439,25 @@ mod tests {
                 vec![0, 0, 0, 1],
             ];
 
-            assert_eq!(i1, identity_mat(1));
-            assert_eq!(i2, identity_mat(2));
-            assert_eq!(i3, identity_mat(3));
-            assert_eq!(i4, identity_mat(4));
+            assert_eq!(i1, identity_mat(1).unwrap());
+            assert_eq!(i2, identity_mat(2).unwrap());
+            assert_eq!(i3, identity_mat(3).unwrap());
+            assert_eq!(i4, identity_mat(4).unwrap());
         }
 
         #[test]
         fn fn_mat_has_right_dims() {
             // TODO: Find a better way to test
             use crate::core::dims;
-            let x = fn_mat(2, 2, || thread_rng().gen_range(1, 10));
-            assert_eq!(dims(&x), (2, 2));
-            let y = fn_mat(8, 2, || thread_rng().gen::<f32>());
-            assert_eq!(dims(&y), (8, 2));
+            let x = fn_mat(2, 2, || thread_rng().gen_range(1, 10)).unwrap();
+            assert_eq!(dims(&x).unwrap(), (2, 2));
+            let y = fn_mat(8, 2, || thread_rng().gen::<f32>()).unwrap();
+            assert_eq!(dims(&y).unwrap(), (8, 2));
         }
 
         #[test]
         fn fn_mat_const_fn() {
-            let x = fn_mat(4, 6, || 42);
+            let x = fn_mat(4, 6, || 42).unwrap();
             let y = vec![
                 vec![42, 42, 42, 42, 42, 42],
                 vec![42, 42, 42, 42, 42, 42],
@@ -469,7 +469,7 @@ mod tests {
 
         #[test]
         fn ranged_rand_mat_is_ranged() {
-            let x = ranged_rand_mat(10, 10, 0, 10);
+            let x = ranged_rand_mat(10, 10, 0, 10).unwrap();
             for i in 0..10 {
                 for j in 0..10 {
                     assert!(0 <= x[i][j]);
@@ -486,7 +486,7 @@ mod tests {
 
         #[test]
         fn ranged_rand_around_mat_is_ranged_around() {
-            let x = ranged_rand_around_mat(10, 10, 10);
+            let x = ranged_rand_around_mat(10, 10, 10).unwrap();
             for i in 0..10 {
                 for j in 0..10 {
                     assert!(-10 <= x[i][j]);
@@ -494,7 +494,7 @@ mod tests {
                 }
             }
             // Test negitive case
-            let x = ranged_rand_around_mat(10, 10, -10);
+            let x = ranged_rand_around_mat(10, 10, -10).unwrap();
             for i in 0..10 {
                 for j in 0..10 {
                     assert!(-10 <= x[i][j]);
@@ -505,7 +505,7 @@ mod tests {
 
         #[test]
         fn one_to_minus_one_mat_is_one_to_minus_one() {
-            let x = one_to_minus_one_mat::<f32>(10, 10);
+            let x = one_to_minus_one_mat::<f32>(10, 10).unwrap();
             for i in 0..10 {
                 for j in 0..10 {
                     assert!(-10.0 <= x[i][j]);

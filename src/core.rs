@@ -88,12 +88,13 @@ mod tests {
     #[test]
     fn dimensions_works() {
         let x = vec![vec![1, 2, 3, 4], vec![4, 5, 4, 0]];
-        assert_eq!(dims(&x), (2, 4))
+        assert_eq!(dims(&x).unwrap(), (2, 4))
     }
 
     #[test]
     #[should_panic]
     fn dims_panics_on_invalid() {
+        
         dims(&vec![vec![1, 2, 3], vec![1]]);
     }
 
