@@ -32,21 +32,30 @@ extern crate num_traits;
 use num_traits::NumAssign;
 
 use crate::core;
-use crate::core::{Mat, dims, MatrixError};
+use crate::core::{dims, Mat, MatrixError};
 
 /// Calculates the dot product of two Vectors of Numbers.
-pub fn dot_product<T: NumAssign + Copy>(a: &Vec<T>, b: &Vec<T>) -> Result<T, MatrixError> {
-    let mut acc: T = T::zero();
-    assert_eq!(a.len(), b.len());
-    for (av, bv) in a.iter().zip(b.iter()) {
-        acc += (*av) * (*bv);
+pub fn dot_product<T>(a: &Vec<T>, b: &Vec<T>) -> Result<T, MatrixError>
+where
+    T: NumAssign + Copy,
+{
+    if a.len() == b.len() {
+        let mut acc: T = T::zero();
+        for (av, bv) in a.iter().zip(b.iter()) {
+            acc += (*av) * (*bv);
+        }
+        return Ok(acc);
+    } else {
+        return Err(MatrixError::InvalidDims);
     }
-    return acc;
 }
 
 /// Calculates the transpose of a matrix
-pub fn transpose<T: NumAssign + Copy>(a: &Mat<T>) -> Mat<T> {
-    let (m, n): (usize, usize) = core::dims(a);
+pub fn transpose<T>(a: &Mat<T>) -> Result<Mat<T>, MatrixError>
+where
+    T: NumAssign + Copy,
+{
+    let (m, n): (usize, usize) = core::dims(a)?;
     let mut r: Mat<T> = Vec::new();
 
     // Give `r` some capacity
@@ -60,54 +69,60 @@ pub fn transpose<T: NumAssign + Copy>(a: &Mat<T>) -> Mat<T> {
         }
     }
 
-    return r;
+    return Ok(r);
 }
 
 /// Multiplys matrix `a` by scalar `k`. Mutates value `a` through borrowing.
-/// 
+///
 /// For a function that doesn't mutate `a` see `jamml::ops::scalar_mul`
-/// 
+///
 /// ```
 /// # use jamml::ops::scalar_mul_inline;
 /// let mut a = vec![vec![1,  8, -3],
 ///                  vec![4, -2,  5]];
 /// let c = 2;
-/// 
+///
 /// scalar_mul_inline(&mut a, c);
-/// 
+///
 /// let ac = vec![vec![2, 16, -6],
 ///               vec![8, -4, 10]];
-/// 
+///
 /// assert_eq!(a, ac)
 /// ```
-pub fn scalar_mul_inline<T: NumAssign + Copy>(a: &mut Mat<T>, k: T){
-    let (m, n) = dims(a);
-    for i in 0..m{
-        for j in 0..n{
+pub fn scalar_mul_inline<T>(a: &mut Mat<T>, k: T)
+where
+    T: NumAssign + Copy,
+{
+    let (m, n) = dims(a).unwrap();
+    for i in 0..m {
+        for j in 0..n {
             a[i][j] *= k;
         }
     }
 }
 
 /// Returns matrix `a` times scalar `k`. Does not mutate `a` but clones
-/// 
+///
 /// Note that this function clones `a` at runtime, so may be expensive for large
 /// matrices
-/// 
+///
 /// For a function that avoids cloning by mutating `a` see `jamml::ops::scalar_mul_inline`
-/// 
+///
 /// ```
 /// # use jamml::ops::scalar_mul;
 /// let a = vec![vec![1,  8, -3],
 ///              vec![4, -2,  5]];
 /// let c = 2;
-/// 
+///
 /// let ac = vec![vec![2, 16, -6],
 ///               vec![8, -4, 10]];
-/// 
+///
 /// assert_eq!(scalar_mul(&a, c), ac)
 /// ```
-pub fn scalar_mul<T: NumAssign + Copy>(a: &Mat<T>, k: T) -> Mat<T>{
+pub fn scalar_mul<T>(a: &Mat<T>, k: T) -> Mat<T>
+where
+    T: NumAssign + Copy,
+{
     let mut m = a.clone();
     scalar_mul_inline(&mut m, k);
     m

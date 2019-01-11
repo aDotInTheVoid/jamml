@@ -42,7 +42,10 @@ use crate::core::{Mat, MatrixError};
 /// [a, b, c] ->  [b]
 ///               [c]]
 /// ```
-pub fn column_mat<T: NumAssign + Copy>(v: &Vec<T>) -> Mat<T> {
+pub fn column_mat<T>(v: &Vec<T>) -> Mat<T>
+where
+    T: NumAssign + Copy,
+{
     let mut m: Mat<T> = Vec::new();
 
     for i in v {
@@ -61,7 +64,10 @@ pub fn column_mat<T: NumAssign + Copy>(v: &Vec<T>) -> Mat<T> {
 ///              vec![0, 0]];
 /// assert_eq!(x, y);
 /// ```
-pub fn zero_mat<T: NumAssign + Copy>(m: usize, n: usize) -> Mat<T> {
+pub fn zero_mat<T>(m: usize, n: usize) -> Result<Mat<T>, MatrixError>
+where
+    T: NumAssign + Copy,
+{
     n_mat(m, n, T::zero())
 }
 
@@ -75,7 +81,10 @@ pub fn zero_mat<T: NumAssign + Copy>(m: usize, n: usize) -> Mat<T> {
 ///              vec![1, 1]];
 /// assert_eq!(x, y)
 /// ```
-pub fn one_mat<T: NumAssign + Copy>(m: usize, n: usize) -> Mat<T> {
+pub fn one_mat<T>(m: usize, n: usize) -> Result<Mat<T>, MatrixError>
+where
+    T: NumAssign + Copy,
+{
     n_mat(m, n, T::one())
 }
 
@@ -89,12 +98,18 @@ pub fn one_mat<T: NumAssign + Copy>(m: usize, n: usize) -> Mat<T> {
 ///              vec![7, 7]];
 /// assert_eq!(x, y);
 /// ```
-pub fn n_mat<T: NumAssign + Copy>(m: usize, n: usize, x: T) -> Option<Mat<T>, MatrixError> {
+pub fn n_mat<T>(m: usize, n: usize, x: T) -> Result<Mat<T>, MatrixError>
+where
+    T: NumAssign + Copy,
+{
     //TODO: Return result or use non zero type
-    assert!(m != 0 && n != 0);
-    // I think `vec!` allocs enough capacity
-    //TODO: check if vec! is optimised enough
-    vec![vec![x; n]; m]
+    if m == 0 && n == 0 {
+        return Err(MatrixError::InvalidDims);
+    } else {
+        // I think `vec!` allocs enough capacity
+        //TODO: check if vec! is optimised enough
+        return Ok(vec![vec![x; n]; m]);
+    }
 }
 
 /// Creates a `m` by `m` identity matrix of type `T`
@@ -108,12 +123,15 @@ pub fn n_mat<T: NumAssign + Copy>(m: usize, n: usize, x: T) -> Option<Mat<T>, Ma
 ///              vec![0, 0, 0, 1]];
 /// assert_eq!(x, y);
 /// ```
-pub fn identity_mat<T: NumAssign + Copy>(m: usize) -> Mat<T> {
-    let mut r = zero_mat(m, m);
+pub fn identity_mat<T>(m: usize) -> Result<Mat<T>, MatrixError>
+where
+    T: NumAssign + Copy,
+{
+    let mut r = zero_mat(m, m)?;
     for i in 0..m {
         r[i][i] = T::one();
     }
-    return r;
+    return Ok(r);
 }
 
 /// Creates a `m` by `n` matrix of by using function `f` to determine each element.
@@ -129,20 +147,33 @@ pub fn identity_mat<T: NumAssign + Copy>(m: usize) -> Mat<T> {
 ///              vec![8, 8]];
 /// assert_eq!(x, y);
 /// ```
-pub fn fn_mat<T: NumAssign + Copy, F: Fn() -> T>(m: usize, n: usize, f: F) -> Mat<T> {
-    let mut r = zero_mat(m, n);
+pub fn fn_mat<T, F>(
+    m: usize,
+    n: usize,
+    f: F,
+) -> Result<Mat<T>, MatrixError>
+where
+    T: NumAssign + Copy,
+    F: Fn() -> T,
+{
+    let mut r = zero_mat(m, n)?;
     for i in 0..m {
         for j in 0..n {
             r[i][j] = f();
         }
     }
-    return r;
+    return Ok(r);
 }
 
 /// Creates a `m` by `n` matrix of random values between `min` and `max`
 ///
 /// Panics if `min >= max`
-pub fn ranged_rand_mat<T>(m: usize, n: usize, min: T, max: T) -> Mat<T>
+pub fn ranged_rand_mat<T>(
+    m: usize,
+    n: usize,
+    min: T,
+    max: T,
+) -> Result<Mat<T>, MatrixError>
 where
     T: NumAssign + Copy + rand::distributions::uniform::SampleUniform,
 {
@@ -150,18 +181,31 @@ where
 }
 
 /// Creates a `m` by `n` matrix of random values between `val` and `-val`
-pub fn ranged_rand_around_mat<T>(m: usize, n: usize, val: T) -> Mat<T>
+pub fn ranged_rand_around_mat<T>(
+    m: usize,
+    n: usize,
+    val: T,
+) -> Result<Mat<T>, MatrixError>
 where
-    T: NumAssign + Copy + rand::distributions::uniform::SampleUniform + num_traits::sign::Signed,
+    T: NumAssign
+        + Copy
+        + rand::distributions::uniform::SampleUniform
+        + num_traits::sign::Signed,
 {
     let val = val.abs();
     ranged_rand_mat(m, n, -val, val)
 }
 
 /// Creates a `m` by `n` matrix of random values between `1` and `-1`
-pub fn one_to_minus_one_mat<T>(m: usize, n: usize) -> Mat<T>
+pub fn one_to_minus_one_mat<T>(
+    m: usize,
+    n: usize,
+) -> Result<Mat<T>, MatrixError>
 where
-    T: NumAssign + Copy + rand::distributions::uniform::SampleUniform + num_traits::sign::Signed,
+    T: NumAssign
+        + Copy
+        + rand::distributions::uniform::SampleUniform
+        + num_traits::sign::Signed,
 {
     ranged_rand_mat(m, n, -T::one(), T::one())
 }

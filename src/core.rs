@@ -26,8 +26,6 @@
 extern crate num_traits;
 use num_traits::NumAssign;
 
-const MAT_INVALID_ERR_STR: &str = "Matrix invalid (not rectangular)";
-
 /// For now, a matrix is a vector of vectors of numbers
 ///
 /// When I change this, it'll probably be easyer to rewrite from scratch.
@@ -35,7 +33,10 @@ const MAT_INVALID_ERR_STR: &str = "Matrix invalid (not rectangular)";
 pub type Mat<T /* Copy + NumAssign*/> = Vec<Vec<T>>;
 
 /// Finds weather or not each row in a matrix it the same lenght.
-pub fn isvalid<T: Copy + NumAssign>(m: &Mat<T>) -> bool {
+pub fn isvalid<T>(m: &Mat<T>) -> bool
+where
+    T: Copy + NumAssign,
+{
     let l = m[0].len();
     for i in m.iter() {
         if i.len() != l {
@@ -48,17 +49,22 @@ pub fn isvalid<T: Copy + NumAssign>(m: &Mat<T>) -> bool {
 /// Return the dimensions of a matrix.
 ///
 /// Panicks if the matrix isn't valid
-pub fn dims<T: NumAssign + Copy>(m: &Mat<T>) -> Result<(usize, usize), MatrixError> {
-    assert!(isvalid(&m), MAT_INVALID_ERR_STR);
-    return (m.len(), (m[0]).len());
+pub fn dims<T>(m: &Mat<T>) -> Result<(usize, usize), MatrixError>
+where
+    T: NumAssign + Copy,
+{
+    if isvalid(&m) {
+        return Ok((m.len(), (m[0]).len()));
+    } else {
+        return Err(MatrixError::NotRectangle);
+    }
 }
 
-pub enum MatrixError{
-    NotSquare,
-    InvalidDims
+#[derive(Debug)]
+pub enum MatrixError {
+    NotRectangle,
+    InvalidDims,
 }
-
-
 
 #[cfg(test)]
 mod tests {
@@ -66,7 +72,8 @@ mod tests {
     #[test]
     fn matrix_type() {
         #[allow(unused_variables)]
-        let x: Mat<i32> = vec![vec![1, 20000, 3], vec![4, -5, 6], vec![-7, -8, 9]];
+        let x: Mat<i32> =
+            vec![vec![1, 20000, 3], vec![4, -5, 6], vec![-7, -8, 9]];
         #[allow(unused_variables)]
         let x: Mat<f32> = vec![
             vec![10.6, 2.0, 3.3],
@@ -74,7 +81,8 @@ mod tests {
             vec![-7.64, 8.2435, 9.2435],
         ];
         #[allow(unused_variables)]
-        let x: Mat<u32> = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
+        let x: Mat<u32> =
+            vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
     }
 
     #[test]
