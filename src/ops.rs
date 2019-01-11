@@ -89,16 +89,17 @@ where
 ///
 /// assert_eq!(a, ac)
 /// ```
-pub fn scalar_mul_inline<T>(a: &mut Mat<T>, k: T)
+pub fn scalar_mul_inline<T>(a: &mut Mat<T>, k: T) -> Result<(), MatrixError>
 where
     T: NumAssign + Copy,
 {
-    let (m, n) = dims(a).unwrap();
+    let (m, n) = dims(a)?;
     for i in 0..m {
         for j in 0..n {
             a[i][j] *= k;
         }
     }
+    Ok(())
 }
 
 /// Returns matrix `a` times scalar `k`. Does not mutate `a` but clones
@@ -119,13 +120,13 @@ where
 ///
 /// assert_eq!(scalar_mul(&a, c), ac)
 /// ```
-pub fn scalar_mul<T>(a: &Mat<T>, k: T) -> Mat<T>
+pub fn scalar_mul<T>(a: &Mat<T>, k: T) -> Result<Mat<T>, MatrixError>
 where
     T: NumAssign + Copy,
 {
     let mut m = a.clone();
-    scalar_mul_inline(&mut m, k);
-    m
+    scalar_mul_inline(&mut m, k)?;
+    Ok(m)
 }
 
 #[cfg(test)]

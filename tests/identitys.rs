@@ -8,7 +8,7 @@ fn scalar_multiplication_definion() {
     for _ in 0..10 {
         let c: i32 = rng.gen_range(-100, 100);
         let a = jamml::initializers::ranged_rand_mat(6, 6, -100, 100).unwrap();
-        let ac = jamml::ops::scalar_mul(&a, c);
+        let ac = jamml::ops::scalar_mul(&a, c).unwrap();
 
         for i in 0..6 {
             for j in 0..6 {
@@ -48,10 +48,10 @@ fn transpose_scalar_is_scalar_transpose() {
         let c: i32 = rng.gen_range(-100, 100);
 
         // scalar then transpose
-        let tca = jamml::ops::transpose(&jamml::ops::scalar_mul(&a, c)).unwrap();
+        let tca = jamml::ops::transpose(&jamml::ops::scalar_mul(&a, c).unwrap()).unwrap();
 
         // transpose then scalar
-        let cta = jamml::ops::scalar_mul(&jamml::ops::transpose(&a).unwrap(), c);
+        let cta = jamml::ops::scalar_mul(&jamml::ops::transpose(&a).unwrap(), c).unwrap();
         assert_eq!(tca, cta);
     }
 }

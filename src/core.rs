@@ -92,10 +92,8 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
-    fn dims_panics_on_invalid() {
-        
-        dims(&vec![vec![1, 2, 3], vec![1]]);
+    fn dims_errors_on_invalid() {
+        assert!(dims(&vec![vec![1, 2, 3], vec![1]]).is_err());
     }
 
     #[test]

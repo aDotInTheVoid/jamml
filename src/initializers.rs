@@ -103,7 +103,7 @@ where
     T: NumAssign + Copy,
 {
     //TODO: Return result or use non zero type
-    if m == 0 && n == 0 {
+    if m == 0 || n == 0 {
         return Err(MatrixError::InvalidDims);
     } else {
         // I think `vec!` allocs enough capacity
@@ -272,53 +272,48 @@ mod tests {
             }
         }
     }
-    mod dimm_error_panics {
+    mod dimm_errors_causes_result_err {
         use super::*;
         #[test]
-        #[should_panic]
-        fn zero_mat_panics_left_zero() {
-            zero_mat::<i32>(0, 1);
+
+        fn zero_mat_errs_left_zero() {
+            assert!(zero_mat::<i32>(0, 1).is_err());
         }
         #[test]
-        #[should_panic]
-        fn zero_mat_panics_right_zero() {
-            zero_mat::<i32>(1, 0);
+
+        fn zero_mat_errs_right_zero() {
+            assert!(zero_mat::<i32>(1, 0).is_err());
         }
         #[test]
-        #[should_panic]
-        fn zero_mat_panics_two_zeros() {
-            zero_mat::<i32>(0, 0);
+
+        fn zero_mat_errs_two_zeros() {
+            assert!(zero_mat::<i32>(0, 0).is_err());
         }
         #[test]
-        #[should_panic]
-        fn one_mat_panics_left_zero() {
-            one_mat::<i32>(0, 1);
+
+        fn one_mat_errs_left_zero() {
+            assert!(one_mat::<i32>(0, 1).is_err());
         }
         #[test]
-        #[should_panic]
-        fn one_mat_panics_right_zero() {
-            one_mat::<i32>(1, 0);
+        fn one_mat_errs_right_zero() {
+            assert!(one_mat::<i32>(1, 0).is_err());
         }
         #[test]
-        #[should_panic]
-        fn one_mat_panics_two_zeros() {
-            one_mat::<i32>(0, 0);
+        fn one_mat_errs_two_zeros() {
+            assert!(one_mat::<i32>(0, 0).is_err());
         }
 
         #[test]
-        #[should_panic]
-        fn n_mat_panics_left_zero() {
-            n_mat::<i32>(0, 1, 1);
+        fn n_mat_errs_left_zero() {
+            assert!(n_mat::<i32>(0, 1, 1).is_err());
         }
         #[test]
-        #[should_panic]
-        fn n_mat_panics_right_zero() {
-            n_mat::<i32>(1, 0, 1);
+        fn n_mat_errs_right_zero() {
+            assert!(n_mat::<i32>(1, 0, 1).is_err());
         }
         #[test]
-        #[should_panic]
-        fn n_mat_panics_two_zeros() {
-            n_mat::<i32>(0, 0, 1);
+        fn n_mat_errs_two_zeros() {
+            assert!(n_mat::<i32>(0, 0, 1).is_err());
         }
     }
     // TODO: Fix misleading internal variable names
@@ -481,7 +476,7 @@ mod tests {
         #[test]
         #[should_panic]
         fn ranged_rand_mat_panics_on_wrong_order() {
-            ranged_rand_mat(10, 10, 10, 0);
+            ranged_rand_mat(10, 10, 10, 0).ok();
         }
 
         #[test]
