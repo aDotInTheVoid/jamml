@@ -38,6 +38,8 @@ mod tests {
     #[test]
     fn can_see_mods() {
         #[allow(unused_variables)]
-        let x: core::Mat<i32> = ops::transpose(&initializers::column_mat(&vec![1, 2, 3])).unwrap();
+        let x: core::Mat<i32> =
+            ops::transpose(&initializers::column_mat(&vec![1, 2, 3]))
+                .unwrap();
     }
 }

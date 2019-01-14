@@ -25,7 +25,7 @@
 //!                        vec![2, 5, 8],
 //!                        vec![3, 6, 9]];
 //!
-//! assert_eq!(m, transpose(&t));
+//! assert_eq!(m, transpose(&t).unwrap());
 //! ```
 
 extern crate num_traits;
@@ -35,6 +35,8 @@ use crate::core;
 use crate::core::{dims, Mat, MatrixError};
 
 /// Calculates the dot product of two Vectors of Numbers.
+///
+/// Returns `Ok(T) if `a.len() == b.len()`. Otherwise returns `Err(MatrixError::InvalidDims)`
 pub fn dot_product<T>(a: &Vec<T>, b: &Vec<T>) -> Result<T, MatrixError>
 where
     T: NumAssign + Copy,
@@ -51,6 +53,8 @@ where
 }
 
 /// Calculates the transpose of a matrix
+///
+/// Returns `Ok(Mat<T>)` if `jamml::core::isvalid(a)`. Otherwise returns `Err(MatrixError::InvalidDims)`
 pub fn transpose<T>(a: &Mat<T>) -> Result<Mat<T>, MatrixError>
 where
     T: NumAssign + Copy,
@@ -76,6 +80,8 @@ where
 ///
 /// For a function that doesn't mutate `a` see `jamml::ops::scalar_mul`
 ///
+/// Returns `Ok(Mat<T>)` if `jamml::core::isvalid(a)`. Otherwise returns `Err(MatrixError::InvalidDims)`
+///
 /// ```
 /// # use jamml::ops::scalar_mul_inline;
 /// let mut a = vec![vec![1,  8, -3],
@@ -89,7 +95,10 @@ where
 ///
 /// assert_eq!(a, ac)
 /// ```
-pub fn scalar_mul_inline<T>(a: &mut Mat<T>, k: T) -> Result<(), MatrixError>
+pub fn scalar_mul_inline<T>(
+    a: &mut Mat<T>,
+    k: T,
+) -> Result<(), MatrixError>
 where
     T: NumAssign + Copy,
 {
@@ -107,6 +116,8 @@ where
 /// Note that this function clones `a` at runtime, so may be expensive for large
 /// matrices
 ///
+/// Returns `Ok(())` if `jamml::core::isvalid(a)`. Otherwise returns `Err(MatrixError::InvalidDims)`
+///
 /// For a function that avoids cloning by mutating `a` see `jamml::ops::scalar_mul_inline`
 ///
 /// ```
@@ -118,7 +129,7 @@ where
 /// let ac = vec![vec![2, 16, -6],
 ///               vec![8, -4, 10]];
 ///
-/// assert_eq!(scalar_mul(&a, c), ac)
+/// assert_eq!(scalar_mul(&a, c).unwrap(), ac)
 /// ```
 pub fn scalar_mul<T>(a: &Mat<T>, k: T) -> Result<Mat<T>, MatrixError>
 where
@@ -141,9 +152,18 @@ mod tests {
 
     #[test]
     fn dot_product_3_elem() {
-        assert_eq!(dot_product(&vec![1, 3, -5], &vec![4, -2, -1]).unwrap(), 3);
-        assert_eq!(dot_product(&vec![3, 1, 8],    &vec![4, 2, 3]).unwrap(), 38);
-        assert_eq!(dot_product(&vec![2, 5, -2],  &vec![1, 8, -3]).unwrap(), 48);
+        assert_eq!(
+            dot_product(&vec![1, 3, -5], &vec![4, -2, -1]).unwrap(),
+            3
+        );
+        assert_eq!(
+            dot_product(&vec![3, 1, 8], &vec![4, 2, 3]).unwrap(),
+            38
+        );
+        assert_eq!(
+            dot_product(&vec![2, 5, -2], &vec![1, 8, -3]).unwrap(),
+            48
+        );
     }
 
     #[test]

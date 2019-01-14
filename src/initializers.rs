@@ -33,7 +33,7 @@ use rand::{thread_rng, Rng};
 
 use crate::core::{Mat, MatrixError};
 
-/// Creates a matrix for a column vector from `&Vec v`
+/// Creates a matrix for a column vector from `v`
 ///
 /// Essensialt we take each element in the input vector and put it into its own vector,
 /// before stringing them together.
@@ -41,6 +41,15 @@ use crate::core::{Mat, MatrixError};
 ///              [[a]
 /// [a, b, c] ->  [b]
 ///               [c]]
+/// ```
+/// # use jamml::initializers::column_mat;
+/// let x = column_mat(&vec![1, 2, 3, 17]);
+/// let y = vec![vec![1],
+///              vec![2],
+///              vec![3]],
+///              vec![17]];
+///
+/// assert_eq!(x, y);
 /// ```
 pub fn column_mat<T>(v: &Vec<T>) -> Mat<T>
 where
@@ -56,12 +65,15 @@ where
 
 /// Creates a `m` by `n` matrix of type `T`, where each element is `T::zero()`
 ///
+/// Returns `Ok(Mat<T>)` if `m > 0 && n > 0`. Otherwise returns `Err(MatrixError::InvalidDims)`
+///
 /// ```rust
 /// # use jamml::initializers::zero_mat;
-/// let x = zero_mat::<i32>(3, 2);
+/// let x = zero_mat::<i32>(3, 2).unwrap();
 /// let y = vec![vec![0, 0],
 ///              vec![0, 0],
 ///              vec![0, 0]];
+///
 /// assert_eq!(x, y);
 /// ```
 pub fn zero_mat<T>(m: usize, n: usize) -> Result<Mat<T>, MatrixError>
@@ -73,13 +85,16 @@ where
 
 /// Creates a `m` by `n` matrix of type `T`, where each element is `T::one()`
 ///
+/// Returns `Ok(Mat<T>)` if `m > 0 && n > 0`. Otherwise returns `Err(MatrixError::InvalidDims)`
+///
 /// ```rust
 /// # use jamml::initializers::one_mat;
-/// let x = one_mat::<i32>(3, 2);
+/// let x = one_mat::<i32>(3, 2).unwrap();
 /// let y = vec![vec![1, 1],
 ///              vec![1, 1],
 ///              vec![1, 1]];
-/// assert_eq!(x, y)
+///
+/// assert_eq!(x, y);
 /// ```
 pub fn one_mat<T>(m: usize, n: usize) -> Result<Mat<T>, MatrixError>
 where
@@ -90,9 +105,11 @@ where
 
 /// Creates a `m` by `n` matrix of type `T`, where each element is `x`
 ///
+/// Returns `Ok(Mat<T>)` if `m > 0 && n > 0`. Otherwise returns `Err(MatrixError::InvalidDims)`
+///
 /// ```rust
 /// # use jamml::initializers::n_mat;
-/// let x = n_mat(3, 2, 7);
+/// let x = n_mat(3, 2, 7).unwrap();
 /// let y = vec![vec![7, 7],
 ///              vec![7, 7],
 ///              vec![7, 7]];
@@ -102,7 +119,6 @@ pub fn n_mat<T>(m: usize, n: usize, x: T) -> Result<Mat<T>, MatrixError>
 where
     T: NumAssign + Copy,
 {
-    //TODO: Return result or use non zero type
     if m == 0 || n == 0 {
         return Err(MatrixError::InvalidDims);
     } else {
@@ -114,13 +130,16 @@ where
 
 /// Creates a `m` by `m` identity matrix of type `T`
 ///
+/// Returns `Ok(Mat<T>)` if `m > 0`. Otherwise returns `Err(MatrixError::InvalidDims)`
+///
 /// ```rust
 /// # use jamml::initializers::identity_mat;
-/// let x = identity_mat::<i32>(4);
+/// let x = identity_mat::<i32>(4).unwrap();
 /// let y = vec![vec![1, 0, 0, 0],
 ///              vec![0, 1, 0, 0],
 ///              vec![0, 0, 1, 0],
 ///              vec![0, 0, 0, 1]];
+///
 /// assert_eq!(x, y);
 /// ```
 pub fn identity_mat<T>(m: usize) -> Result<Mat<T>, MatrixError>
@@ -138,13 +157,16 @@ where
 ///
 /// `f` shound be a function that takes no arguments and return `T`
 ///
+/// Returns `Ok(Mat<T>)` if `m > 0 && n > 0`. Otherwise returns `Err(MatrixError::InvalidDims)`
+///
 /// ```rust
 /// # use jamml::initializers::fn_mat;
-/// let x = fn_mat(4, 2, ||{2*4});
+/// let x = fn_mat(4, 2, ||{2*4}).unwrap();
 /// let y = vec![vec![8, 8],
 ///              vec![8, 8],
 ///              vec![8, 8],
 ///              vec![8, 8]];
+///
 /// assert_eq!(x, y);
 /// ```
 pub fn fn_mat<T, F>(
@@ -167,7 +189,15 @@ where
 
 /// Creates a `m` by `n` matrix of random values between `min` and `max`
 ///
+/// Returns `Ok(Mat<T>)` if `m > 0 && n > 0`. Otherwise returns `Err(MatrixError::InvalidDims)`
+///
 /// Panics if `min >= max`
+///
+/// ```
+/// # use jamml::initializers::ranged_rand_mat;
+/// let x = ranged_rand_mat(5, 7, -7, 4).unwrap();
+/// # // TODO: Doctest me
+/// ```
 pub fn ranged_rand_mat<T>(
     m: usize,
     n: usize,
@@ -181,6 +211,14 @@ where
 }
 
 /// Creates a `m` by `n` matrix of random values between `val` and `-val`
+///
+/// Returns `Ok(Mat<T>)` if `m > 0 && n > 0`. Otherwise returns `Err(MatrixError::InvalidDims)`
+///
+/// ```
+/// # use jamml::initializers::ranged_rand_around_mat;
+/// let x = ranged_rand_around_mat(5, 7, 1).unwrap();
+/// # // TODO: Doctest me
+/// ```
 pub fn ranged_rand_around_mat<T>(
     m: usize,
     n: usize,
@@ -197,6 +235,14 @@ where
 }
 
 /// Creates a `m` by `n` matrix of random values between `1` and `-1`
+///
+/// Returns `Ok(Mat<T>)` if `m > 0 && n > 0`. Otherwise returns `Err(MatrixError::InvalidDims)`
+///
+/// ```
+/// # use jamml::initializers::one_to_minus_one_mat;
+/// let x = one_to_minus_one_mat::<i32>(5, 7).unwrap();
+/// # // TODO: Doctest me
+/// ```
 pub fn one_to_minus_one_mat<T>(
     m: usize,
     n: usize,
@@ -444,7 +490,8 @@ mod tests {
         fn fn_mat_has_right_dims() {
             // TODO: Find a better way to test
             use crate::core::dims;
-            let x = fn_mat(2, 2, || thread_rng().gen_range(1, 10)).unwrap();
+            let x =
+                fn_mat(2, 2, || thread_rng().gen_range(1, 10)).unwrap();
             assert_eq!(dims(&x).unwrap(), (2, 2));
             let y = fn_mat(8, 2, || thread_rng().gen::<f32>()).unwrap();
             assert_eq!(dims(&y).unwrap(), (8, 2));
