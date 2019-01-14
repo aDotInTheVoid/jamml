@@ -1,0 +1,8 @@
+# unstable_features = true
+
+max_width = 75
+newline_style = "unix"
+# wrap_comments = true
+# comment_width = 75
+# format_doc_comments = true
+# edition = "2018"

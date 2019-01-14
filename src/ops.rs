@@ -25,28 +25,41 @@
 //!                        vec![2, 5, 8],
 //!                        vec![3, 6, 9]];
 //!
-//! assert_eq!(m, transpose(&t));
+//! assert_eq!(m, transpose(&t).unwrap());
 //! ```
 
 extern crate num_traits;
 use num_traits::NumAssign;
 
 use crate::core;
-use crate::core::{Mat, dims};
+use crate::core::{dims, Mat, MatrixError};
 
 /// Calculates the dot product of two Vectors of Numbers.
-pub fn dot_product<T: NumAssign + Copy>(a: &Vec<T>, b: &Vec<T>) -> T {
-    let mut acc: T = T::zero();
-    assert_eq!(a.len(), b.len());
-    for (av, bv) in a.iter().zip(b.iter()) {
-        acc += (*av) * (*bv);
+///
+/// Returns `Ok(T) if `a.len() == b.len()`. Otherwise returns `Err(MatrixError::InvalidDims)`
+pub fn dot_product<T>(a: &Vec<T>, b: &Vec<T>) -> Result<T, MatrixError>
+where
+    T: NumAssign + Copy,
+{
+    if a.len() == b.len() {
+        let mut acc: T = T::zero();
+        for (av, bv) in a.iter().zip(b.iter()) {
+            acc += (*av) * (*bv);
+        }
+        return Ok(acc);
+    } else {
+        return Err(MatrixError::InvalidDims);
     }
-    return acc;
 }
 
 /// Calculates the transpose of a matrix
-pub fn transpose<T: NumAssign + Copy>(a: &Mat<T>) -> Mat<T> {
-    let (m, n): (usize, usize) = core::dims(a);
+///
+/// Returns `Ok(Mat<T>)` if `jamml::core::isvalid(a)`. Otherwise returns `Err(MatrixError::InvalidDims)`
+pub fn transpose<T>(a: &Mat<T>) -> Result<Mat<T>, MatrixError>
+where
+    T: NumAssign + Copy,
+{
+    let (m, n): (usize, usize) = core::dims(a)?;
     let mut r: Mat<T> = Vec::new();
 
     // Give `r` some capacity
@@ -60,57 +73,71 @@ pub fn transpose<T: NumAssign + Copy>(a: &Mat<T>) -> Mat<T> {
         }
     }
 
-    return r;
+    return Ok(r);
 }
 
 /// Multiplys matrix `a` by scalar `k`. Mutates value `a` through borrowing.
-/// 
+///
 /// For a function that doesn't mutate `a` see `jamml::ops::scalar_mul`
-/// 
+///
+/// Returns `Ok(Mat<T>)` if `jamml::core::isvalid(a)`. Otherwise returns `Err(MatrixError::InvalidDims)`
+///
 /// ```
 /// # use jamml::ops::scalar_mul_inline;
 /// let mut a = vec![vec![1,  8, -3],
 ///                  vec![4, -2,  5]];
 /// let c = 2;
-/// 
+///
 /// scalar_mul_inline(&mut a, c);
-/// 
+///
 /// let ac = vec![vec![2, 16, -6],
 ///               vec![8, -4, 10]];
-/// 
+///
 /// assert_eq!(a, ac)
 /// ```
-pub fn scalar_mul_inline<T: NumAssign + Copy>(a: &mut Mat<T>, k: T){
-    let (m, n) = dims(a);
-    for i in 0..m{
-        for j in 0..n{
+pub fn scalar_mul_inline<T>(
+    a: &mut Mat<T>,
+    k: T,
+) -> Result<(), MatrixError>
+where
+    T: NumAssign + Copy,
+{
+    let (m, n) = dims(a)?;
+    for i in 0..m {
+        for j in 0..n {
             a[i][j] *= k;
         }
     }
+    Ok(())
 }
 
 /// Returns matrix `a` times scalar `k`. Does not mutate `a` but clones
-/// 
+///
 /// Note that this function clones `a` at runtime, so may be expensive for large
 /// matrices
-/// 
+///
+/// Returns `Ok(())` if `jamml::core::isvalid(a)`. Otherwise returns `Err(MatrixError::InvalidDims)`
+///
 /// For a function that avoids cloning by mutating `a` see `jamml::ops::scalar_mul_inline`
-/// 
+///
 /// ```
 /// # use jamml::ops::scalar_mul;
 /// let a = vec![vec![1,  8, -3],
 ///              vec![4, -2,  5]];
 /// let c = 2;
-/// 
+///
 /// let ac = vec![vec![2, 16, -6],
 ///               vec![8, -4, 10]];
-/// 
-/// assert_eq!(scalar_mul(&a, c), ac)
+///
+/// assert_eq!(scalar_mul(&a, c).unwrap(), ac)
 /// ```
-pub fn scalar_mul<T: NumAssign + Copy>(a: &Mat<T>, k: T) -> Mat<T>{
+pub fn scalar_mul<T>(a: &Mat<T>, k: T) -> Result<Mat<T>, MatrixError>
+where
+    T: NumAssign + Copy,
+{
     let mut m = a.clone();
-    scalar_mul_inline(&mut m, k);
-    m
+    scalar_mul_inline(&mut m, k)?;
+    Ok(m)
 }
 
 #[cfg(test)]
@@ -119,15 +146,24 @@ mod tests {
     use rand::{thread_rng, Rng};
     #[test]
     fn dot_product_2_elem() {
-        assert_eq!(dot_product(&vec![2, 5], &vec![3, 1]), 11);
-        assert_eq!(dot_product(&vec![4, 3], &vec![3, 5]), 27);
+        assert_eq!(dot_product(&vec![2, 5], &vec![3, 1]).unwrap(), 11);
+        assert_eq!(dot_product(&vec![4, 3], &vec![3, 5]).unwrap(), 27);
     }
 
     #[test]
     fn dot_product_3_elem() {
-        assert_eq!(dot_product(&vec![1, 3, -5], &vec![4, -2, -1]), 3);
-        assert_eq!(dot_product(&vec![3, 1, 8], &vec![4, 2, 3]), 38);
-        assert_eq!(dot_product(&vec![2, 5, -2], &vec![1, 8, -3]), 48);
+        assert_eq!(
+            dot_product(&vec![1, 3, -5], &vec![4, -2, -1]).unwrap(),
+            3
+        );
+        assert_eq!(
+            dot_product(&vec![3, 1, 8], &vec![4, 2, 3]).unwrap(),
+            38
+        );
+        assert_eq!(
+            dot_product(&vec![2, 5, -2], &vec![1, 8, -3]).unwrap(),
+            48
+        );
     }
 
     #[test]
@@ -147,7 +183,7 @@ mod tests {
             //  [b d]
             let y = vec![vec![a, c], vec![b, d]];
 
-            assert_eq!(x, transpose(&y));
+            assert_eq!(x, transpose(&y).unwrap());
         }
     }
     #[test]
@@ -174,7 +210,7 @@ mod tests {
             //  [c f i]
             let y = vec![vec![a, d, g], vec![b, e, h], vec![c, f, i]];
 
-            assert_eq!(x, transpose(&y));
+            assert_eq!(x, transpose(&y).unwrap());
         }
     }
     #[test]
@@ -197,7 +233,7 @@ mod tests {
             //  [c f]]
             let y = vec![vec![a, d], vec![b, e], vec![c, f]];
 
-            assert_eq!(x, transpose(&y));
+            assert_eq!(x, transpose(&y).unwrap());
         }
     }
     #[test]
@@ -220,7 +256,7 @@ mod tests {
             //  [b e h]]
             let y = vec![vec![a, d, g], vec![b, e, h]];
 
-            assert_eq!(x, transpose(&y));
+            assert_eq!(x, transpose(&y).unwrap());
         }
     }
 }
