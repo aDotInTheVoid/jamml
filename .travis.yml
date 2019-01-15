@@ -14,7 +14,7 @@ addons:
       - libelf-dev
       - libdw-dev
       - cmake
-      - gcc
+      - gcc-6
       - binutils-dev
       - libiberty-dev
 
