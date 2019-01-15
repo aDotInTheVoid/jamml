@@ -29,6 +29,7 @@ use num_traits::NumAssign;
 
 extern crate rand;
 // Dont remove `Rng` useage, it breaks stuff.
+#[allow(unused_imports)]
 use rand::{thread_rng, Rng};
 
 use crate::core::{Mat, MatrixError};
