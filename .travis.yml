@@ -1,3 +1,4 @@
+dist: xenial
 language: rust
 sudo: required
 rust:
@@ -14,7 +15,7 @@ addons:
       - libelf-dev
       - libdw-dev
       - cmake
-      - gcc-6
+      - gcc
       - binutils-dev
       - libiberty-dev
 
