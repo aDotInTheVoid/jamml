@@ -18,6 +18,8 @@ addons:
       - gcc
       - binutils-dev
       - libiberty-dev
+    sources:
+      - kalakris-cmake
 
 matrix:
   allow_failures:
@@ -25,7 +27,15 @@ matrix:
   fast_finish: true
 
 before_script:
+  - export PATH=$HOME/.cargo/bin:$PATH
+  - cargo install cargo-update || echo "cargo-update already installed"
   - cargo install cargo-travis || echo "cargo-travis already installed"
+  - cargo install-update -a # update outdated cached binaries
+
+
+script:
+  - cargo build
+  - cargo test
 
 after_success: |
   # wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
