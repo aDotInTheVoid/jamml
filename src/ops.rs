@@ -81,7 +81,7 @@ where
 ///
 /// For a function that doesn't mutate `a` see `jamml::ops::scalar_mul`
 ///
-/// Returns `Ok(Mat<T>)` if `jamml::core::isvalid(a)`. Otherwise returns `Err(MatrixError::InvalidDims)`
+/// Returns `Ok(Mat<T>)` if `jamml::core::isvalid(a)`. Otherwise returns `Err(MatrixError::NotRectangle)`
 ///
 /// ```
 /// # use jamml::ops::scalar_mul_inline;
@@ -117,7 +117,7 @@ where
 /// Note that this function clones `a` at runtime, so may be expensive for large
 /// matrices
 ///
-/// Returns `Ok(())` if `jamml::core::isvalid(a)`. Otherwise returns `Err(MatrixError::InvalidDims)`
+/// Returns `Ok(())` if `jamml::core::isvalid(a)`. Otherwise returns `Err(MatrixError::NotRectangle)`
 ///
 /// For a function that avoids cloning by mutating `a` see `jamml::ops::scalar_mul_inline`
 ///
@@ -151,6 +151,88 @@ where
     }
     return r;
 }
+
+
+/// Adds matrix `b` to matrix `a`. Mutates `a` to store results.
+///
+/// For a function that doesn't mutate `a` see `jamml::ops::add`
+///
+/// Returns `Ok(())` if no errors occur.
+/// 
+/// ## Errors
+/// - If `a` or `b` isn't rectangular, `Err(MatrixError::NotRectangle)`
+///  will be returned.
+/// - If `dims(a) != dims(b)`, `Err(MatrixError::InvalidDims)` will be returned.
+/// ```
+/// # use jamml::ops::add_inline;
+/// let mut a = vec![vec![0, 1, 2],
+///                  vec![9, 8, 7]];
+/// 
+/// let b = vec![vec![6, 5, 4],
+///              vec![3, 4, 5]];
+/// 
+/// add_inline(&mut a, &b);
+///
+/// let a_plus_b = vec![vec![6,  6,  6],
+///                    vec![12, 12, 12]];
+///
+/// assert_eq!(a, a_plus_b);
+/// ```
+pub fn add_inline<T>(a: &mut Mat<T>, b: &Mat<T>) -> Result<(), MatrixError>
+where T: NumAssign + Copy
+{
+    // `a` is a `n` by `m` matrix.
+    let (m, n) = dims(a)?;
+    // b is a `n` by `m` matrix.
+    if (m, n) != dims(b)?{
+        return Err(MatrixError::InvalidDims);
+    }
+
+    for i in 0..m {
+        for j in 0..n {
+            a[i][j] += b[i][j];
+        }
+    }
+
+    Ok(())
+}
+
+/// Adds matrix `b` to matrix `a`.
+/// 
+/// This function doesn't mutate values, but clones `a` and adds `b` to the cloned `a`, before returning the cloned `a`.
+///
+/// For a function that avoids cloning by mutating `a` see `jamml::ops::addmul_inline`
+///
+/// Returns `Ok(Mat<T>)` if no errors occur.
+/// 
+/// ## Errors
+/// - If `a` or `b` isn't rectangular, `Err(MatrixError::NotRectangle)`
+///  will be returned.
+/// - If `dims(a) != dims(b)`, `Err(MatrixError::InvalidDims)` will be returned.
+/// ```
+/// # use jamml::ops::add;
+/// let mut a = vec![vec![0, 1, 2],
+///                  vec![9, 8, 7]];
+/// 
+/// let b = vec![vec![6, 5, 4],
+///              vec![3, 4, 5]];
+/// 
+/// let x = add(&mut a, &b).unwrap();
+///
+/// let a_plus_b = vec![vec![6,  6,  6],
+///                    vec![12, 12, 12]];
+///
+/// assert_eq!(a_plus_b, x);
+/// ```
+pub fn add<T>(a: &Mat<T>, b: &Mat<T>) -> Result<Mat<T>, MatrixError>
+where
+    T: NumAssign + Copy,
+{
+    let mut m = a.clone();
+    add_inline(&mut m, b)?;
+    Ok(m)
+}
+
 
 /// Multiplys matrix `a` by matrix `b`
 ///
@@ -189,7 +271,7 @@ where
     }
     // this will check `n` and `p` don't equal `0`
     let mut ab = initializers::zero_mat(n, p)?;
-    // TODO: Core body.
+    // core logic
     for i in 0..n {
         for j in 0..p {
             ab[i][j] = dot_product(&a[i], &column(b, j))
