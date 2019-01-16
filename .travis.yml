@@ -1,3 +1,4 @@
+dist: xenial
 language: rust
 sudo: required
 rust:
@@ -17,11 +18,17 @@ addons:
       - gcc
       - binutils-dev
       - libiberty-dev
+    sources:
+      - kalakris-cmake
 
 matrix:
   allow_failures:
   - rust: nightly
   fast_finish: true
+
+script:
+  - cargo build
+  - cargo test
 
 after_success: |
   wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
@@ -34,9 +41,8 @@ after_success: |
   make install DESTDIR=../../kcov-build &&
   cd ../.. &&
   rm -rf kcov-master &&
-  for file in target/debug/jamml-*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; ./kcov-build/usr/local/bin/kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
-  bash <(curl -s https://codecov.io/bash) &&
-  echo "Uploaded code coverage"
+  for file in target/debug/jamml-*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; ./kcov-build/usr/local/bin/kcov  --coveralls-id=$TRAVIS_JOB_ID  --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
+  bash <(curl -s https://codecov.io/bash)
 
 before_deploy:
 - cargo doc
