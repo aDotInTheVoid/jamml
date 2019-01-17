@@ -152,13 +152,12 @@ where
     return r;
 }
 
-
 /// Adds matrix `b` to matrix `a`. Mutates `a` to store results.
 ///
 /// For a function that doesn't mutate `a` see `jamml::ops::add`
 ///
 /// Returns `Ok(())` if no errors occur.
-/// 
+///
 /// ## Errors
 /// - If `a` or `b` isn't rectangular, `Err(MatrixError::NotRectangle)`
 ///  will be returned.
@@ -167,10 +166,10 @@ where
 /// # use jamml::ops::add_inline;
 /// let mut a = vec![vec![0, 1, 2],
 ///                  vec![9, 8, 7]];
-/// 
+///
 /// let b = vec![vec![6, 5, 4],
 ///              vec![3, 4, 5]];
-/// 
+///
 /// add_inline(&mut a, &b);
 ///
 /// let a_plus_b = vec![vec![6,  6,  6],
@@ -179,12 +178,13 @@ where
 /// assert_eq!(a, a_plus_b);
 /// ```
 pub fn add_inline<T>(a: &mut Mat<T>, b: &Mat<T>) -> Result<(), MatrixError>
-where T: NumAssign + Copy
+where
+    T: NumAssign + Copy,
 {
     // `a` is a `n` by `m` matrix.
     let (m, n) = dims(a)?;
     // b is a `n` by `m` matrix.
-    if (m, n) != dims(b)?{
+    if (m, n) != dims(b)? {
         return Err(MatrixError::InvalidDims);
     }
 
@@ -198,13 +198,13 @@ where T: NumAssign + Copy
 }
 
 /// Adds matrix `b` to matrix `a`.
-/// 
+///
 /// This function doesn't mutate values, but clones `a` and adds `b` to the cloned `a`, before returning the cloned `a`.
 ///
 /// For a function that avoids cloning by mutating `a` see `jamml::ops::addmul_inline`
 ///
 /// Returns `Ok(Mat<T>)` if no errors occur.
-/// 
+///
 /// ## Errors
 /// - If `a` or `b` isn't rectangular, `Err(MatrixError::NotRectangle)`
 ///  will be returned.
@@ -213,10 +213,10 @@ where T: NumAssign + Copy
 /// # use jamml::ops::add;
 /// let mut a = vec![vec![0, 1, 2],
 ///                  vec![9, 8, 7]];
-/// 
+///
 /// let b = vec![vec![6, 5, 4],
 ///              vec![3, 4, 5]];
-/// 
+///
 /// let x = add(&mut a, &b).unwrap();
 ///
 /// let a_plus_b = vec![vec![6,  6,  6],
@@ -232,7 +232,6 @@ where
     add_inline(&mut m, b)?;
     Ok(m)
 }
-
 
 /// Multiplys matrix `a` by matrix `b`
 ///
@@ -286,191 +285,234 @@ where
 mod tests {
     use super::*;
     use rand::{thread_rng, Rng};
-    #[test]
-    fn dot_product_2_elem() {
-        assert_eq!(dot_product(&vec![2, 5], &vec![3, 1]).unwrap(), 11);
-        assert_eq!(dot_product(&vec![4, 3], &vec![3, 5]).unwrap(), 27);
-    }
 
-    #[test]
-    fn dot_product_3_elem() {
-        assert_eq!(
-            dot_product(&vec![1, 3, -5], &vec![4, -2, -1]).unwrap(),
-            3
-        );
-        assert_eq!(
-            dot_product(&vec![3, 1, 8], &vec![4, 2, 3]).unwrap(),
-            38
-        );
-        assert_eq!(
-            dot_product(&vec![2, 5, -2], &vec![1, 8, -3]).unwrap(),
-            48
-        );
-    }
+    mod dot_product_real {
+        use super::*;
+        #[test]
+        fn dot_product_2_elem() {
+            assert_eq!(dot_product(&vec![2, 5], &vec![3, 1]).unwrap(), 11);
+            assert_eq!(dot_product(&vec![4, 3], &vec![3, 5]).unwrap(), 27);
+        }
 
-    #[test]
-    fn transpose_2x2() {
-        let mut rng = thread_rng();
-        for _ in 1..10 {
-            let a = rng.gen_range(0, 10);
-            let b = rng.gen_range(0, 10);
-            let c = rng.gen_range(0, 10);
-            let d = rng.gen_range(0, 10);
-
-            // [[a b]
-            //  [c d]]
-            let x = vec![vec![a, b], vec![c, d]];
-
-            // [[a c]
-            //  [b d]
-            let y = vec![vec![a, c], vec![b, d]];
-
-            assert_eq!(x, transpose(&y).unwrap());
+        #[test]
+        fn dot_product_3_elem() {
+            assert_eq!(
+                dot_product(&vec![1, 3, -5], &vec![4, -2, -1]).unwrap(),
+                3
+            );
+            assert_eq!(
+                dot_product(&vec![3, 1, 8], &vec![4, 2, 3]).unwrap(),
+                38
+            );
+            assert_eq!(
+                dot_product(&vec![2, 5, -2], &vec![1, 8, -3]).unwrap(),
+                48
+            );
         }
     }
-    #[test]
-    fn transpose_3x3() {
-        let mut rng = thread_rng();
-        for _ in 1..10 {
-            let a = rng.gen_range(0, 10);
-            let b = rng.gen_range(0, 10);
-            let c = rng.gen_range(0, 10);
-            let d = rng.gen_range(0, 10);
-            let e = rng.gen_range(0, 10);
-            let f = rng.gen_range(0, 10);
-            let g = rng.gen_range(0, 10);
-            let h = rng.gen_range(0, 10);
-            let i = rng.gen_range(0, 10);
+    mod transpose_rand {
+        use super::*;
 
-            // [[a b c]
-            //  [d e f]
-            //  [g h i]]
-            let x = vec![vec![a, b, c], vec![d, e, f], vec![g, h, i]];
+        #[test]
+        fn transpose_2x2() {
+            let mut rng = thread_rng();
+            for _ in 1..10 {
+                let a = rng.gen_range(0, 10);
+                let b = rng.gen_range(0, 10);
+                let c = rng.gen_range(0, 10);
+                let d = rng.gen_range(0, 10);
 
-            // [[a d g]
-            //  [b e h]
-            //  [c f i]
-            let y = vec![vec![a, d, g], vec![b, e, h], vec![c, f, i]];
+                // [[a b]
+                //  [c d]]
+                let x = vec![vec![a, b], vec![c, d]];
 
-            assert_eq!(x, transpose(&y).unwrap());
+                // [[a c]
+                //  [b d]
+                let y = vec![vec![a, c], vec![b, d]];
+
+                assert_eq!(x, transpose(&y).unwrap());
+            }
+        }
+        #[test]
+        fn transpose_3x3() {
+            let mut rng = thread_rng();
+            for _ in 1..10 {
+                let a = rng.gen_range(0, 10);
+                let b = rng.gen_range(0, 10);
+                let c = rng.gen_range(0, 10);
+                let d = rng.gen_range(0, 10);
+                let e = rng.gen_range(0, 10);
+                let f = rng.gen_range(0, 10);
+                let g = rng.gen_range(0, 10);
+                let h = rng.gen_range(0, 10);
+                let i = rng.gen_range(0, 10);
+
+                // [[a b c]
+                //  [d e f]
+                //  [g h i]]
+                let x = vec![vec![a, b, c], vec![d, e, f], vec![g, h, i]];
+
+                // [[a d g]
+                //  [b e h]
+                //  [c f i]
+                let y = vec![vec![a, d, g], vec![b, e, h], vec![c, f, i]];
+
+                assert_eq!(x, transpose(&y).unwrap());
+            }
+        }
+        #[test]
+        fn transpose_2x3() {
+            let mut rng = thread_rng();
+            for _ in 1..10 {
+                let a = rng.gen_range(0, 10);
+                let b = rng.gen_range(0, 10);
+                let c = rng.gen_range(0, 10);
+                let d = rng.gen_range(0, 10);
+                let e = rng.gen_range(0, 10);
+                let f = rng.gen_range(0, 10);
+
+                // [[a b c]
+                //  [d e f]
+                let x = vec![vec![a, b, c], vec![d, e, f]];
+
+                // [[a d]
+                //  [b e]
+                //  [c f]]
+                let y = vec![vec![a, d], vec![b, e], vec![c, f]];
+
+                assert_eq!(x, transpose(&y).unwrap());
+            }
+        }
+        #[test]
+        fn transpose_3x2() {
+            let mut rng = thread_rng();
+            for _ in 1..10 {
+                let a = rng.gen_range(0, 10);
+                let b = rng.gen_range(0, 10);
+                let d = rng.gen_range(0, 10);
+                let e = rng.gen_range(0, 10);
+                let g = rng.gen_range(0, 10);
+                let h = rng.gen_range(0, 10);
+
+                // [[a b]
+                //  [d e]
+                //  [g h]]
+                let x = vec![vec![a, b], vec![d, e], vec![g, h]];
+
+                // [[a d g]
+                //  [b e h]]
+                let y = vec![vec![a, d, g], vec![b, e, h]];
+
+                assert_eq!(x, transpose(&y).unwrap());
+            }
         }
     }
-    #[test]
-    fn transpose_2x3() {
-        let mut rng = thread_rng();
-        for _ in 1..10 {
-            let a = rng.gen_range(0, 10);
-            let b = rng.gen_range(0, 10);
-            let c = rng.gen_range(0, 10);
-            let d = rng.gen_range(0, 10);
-            let e = rng.gen_range(0, 10);
-            let f = rng.gen_range(0, 10);
+    mod matmul_real {
+        use super::*;
 
-            // [[a b c]
-            //  [d e f]
-            let x = vec![vec![a, b, c], vec![d, e, f]];
-
-            // [[a d]
-            //  [b e]
-            //  [c f]]
-            let y = vec![vec![a, d], vec![b, e], vec![c, f]];
-
-            assert_eq!(x, transpose(&y).unwrap());
+        #[test]
+        fn matmul_2x2() {
+            let a = vec![vec![1, 2], vec![0, 1]];
+            let b = vec![vec![2, 5], vec![6, 7]];
+            let ac_found = matmul(&a, &b).unwrap();
+            let ac_real = vec![vec![14, 19], vec![6, 7]];
+            assert_eq!(ac_found, ac_real);
         }
     }
-    #[test]
-    fn transpose_3x2() {
-        let mut rng = thread_rng();
-        for _ in 1..10 {
-            let a = rng.gen_range(0, 10);
-            let b = rng.gen_range(0, 10);
-            let d = rng.gen_range(0, 10);
-            let e = rng.gen_range(0, 10);
-            let g = rng.gen_range(0, 10);
-            let h = rng.gen_range(0, 10);
+    mod matmul_rand {
+        use super::*;
+        #[test]
+        fn mat_symb_4x3_mul_3x2() {
+            let mut rng = thread_rng();
+            for _ in 0..10 {
+                let a11 = rng.gen_range(-10, 10);
+                let a12 = rng.gen_range(-10, 10);
+                let a13 = rng.gen_range(-10, 10);
+                let a21 = rng.gen_range(-10, 10);
+                let a22 = rng.gen_range(-10, 10);
+                let a23 = rng.gen_range(-10, 10);
+                let a31 = rng.gen_range(-10, 10);
+                let a32 = rng.gen_range(-10, 10);
+                let a33 = rng.gen_range(-10, 10);
+                let a41 = rng.gen_range(-10, 10);
+                let a42 = rng.gen_range(-10, 10);
+                let a43 = rng.gen_range(-10, 10);
 
-            // [[a b]
-            //  [d e]
-            //  [g h]]
-            let x = vec![vec![a, b], vec![d, e], vec![g, h]];
+                let a = vec![
+                    vec![a11, a12, a13],
+                    vec![a21, a22, a23],
+                    vec![a31, a32, a33],
+                    vec![a41, a42, a43],
+                ];
 
-            // [[a d g]
-            //  [b e h]]
-            let y = vec![vec![a, d, g], vec![b, e, h]];
+                let b11 = rng.gen_range(-10, 10);
+                let b12 = rng.gen_range(-10, 10);
+                let b21 = rng.gen_range(-10, 10);
+                let b22 = rng.gen_range(-10, 10);
+                let b31 = rng.gen_range(-10, 10);
+                let b32 = rng.gen_range(-10, 10);
 
-            assert_eq!(x, transpose(&y).unwrap());
+                let b = vec![
+                    // Padding
+                    vec![b11, b12],
+                    vec![b21, b22],
+                    vec![b31, b32],
+                ];
+
+                let ans = vec![
+                    vec![
+                        a11 * b11 + a12 * b21 + a13 * b31,
+                        a11 * b12 + a12 * b22 + a13 * b32,
+                    ],
+                    vec![
+                        a21 * b11 + a22 * b21 + a23 * b31,
+                        a21 * b12 + a22 * b22 + a23 * b32,
+                    ],
+                    vec![
+                        a31 * b11 + a32 * b21 + a33 * b31,
+                        a31 * b12 + a32 * b22 + a33 * b32,
+                    ],
+                    vec![
+                        a41 * b11 + a42 * b21 + a43 * b31,
+                        a41 * b12 + a42 * b22 + a43 * b32,
+                    ],
+                ];
+
+                let ac = matmul(&a, &b).unwrap();
+
+                assert_eq!(ans, ac);
+            }
         }
     }
+    mod add_rng {
+        use super::*;
+        #[test]
+        fn rand_by_rand() {
+            let mut rng = thread_rng();
+            for _ in 0..20 {
+                let m = rng.gen_range(1, 10);
+                let n = rng.gen_range(1, 10);
+                let a =
+                    crate::initializers::ranged_rand_around_mat(m, n, 10)
+                        .unwrap();
+                let b =
+                    crate::initializers::ranged_rand_around_mat::<i32>(
+                        m, n, 10,
+                    )
+                    .unwrap();
+                let mut a_mut = a.clone();
+                let a_p_b = add(&a, &b).unwrap();
+                add_inline(&mut a_mut, &b).unwrap();
+                assert_eq!(a_mut, a_p_b);
 
-    #[test]
-    fn matmul_2x2() {
-        let a = vec![vec![1, 2], vec![0, 1]];
-        let b = vec![vec![2, 5], vec![6, 7]];
-        let ac_found = matmul(&a, &b).unwrap();
-        let ac_real = vec![vec![14, 19], vec![6, 7]];
-        assert_eq!(ac_found, ac_real);
-    }
-
-    #[test]
-    fn mat_symb_4x3_mul_3x2() {
-        let mut rng = thread_rng();
-        for _ in 0..10 {
-            let a11 = rng.gen_range(-10, 10);
-            let a12 = rng.gen_range(-10, 10);
-            let a13 = rng.gen_range(-10, 10);
-            let a21 = rng.gen_range(-10, 10);
-            let a22 = rng.gen_range(-10, 10);
-            let a23 = rng.gen_range(-10, 10);
-            let a31 = rng.gen_range(-10, 10);
-            let a32 = rng.gen_range(-10, 10);
-            let a33 = rng.gen_range(-10, 10);
-            let a41 = rng.gen_range(-10, 10);
-            let a42 = rng.gen_range(-10, 10);
-            let a43 = rng.gen_range(-10, 10);
-
-            let a = vec![
-                vec![a11, a12, a13],
-                vec![a21, a22, a23],
-                vec![a31, a32, a33],
-                vec![a41, a42, a43],
-            ];
-
-            let b11 = rng.gen_range(-10, 10);
-            let b12 = rng.gen_range(-10, 10);
-            let b21 = rng.gen_range(-10, 10);
-            let b22 = rng.gen_range(-10, 10);
-            let b31 = rng.gen_range(-10, 10);
-            let b32 = rng.gen_range(-10, 10);
-
-            let b = vec![
-                // Padding
-                vec![b11, b12],
-                vec![b21, b22],
-                vec![b31, b32],
-            ];
-
-            let ans = vec![
-                vec![
-                    a11 * b11 + a12 * b21 + a13 * b31,
-                    a11 * b12 + a12 * b22 + a13 * b32,
-                ],
-                vec![
-                    a21 * b11 + a22 * b21 + a23 * b31,
-                    a21 * b12 + a22 * b22 + a23 * b32,
-                ],
-                vec![
-                    a31 * b11 + a32 * b21 + a33 * b31,
-                    a31 * b12 + a32 * b22 + a33 * b32,
-                ],
-                vec![
-                    a41 * b11 + a42 * b21 + a43 * b31,
-                    a41 * b12 + a42 * b22 + a43 * b32,
-                ],
-            ];
-
-            let ac = matmul(&a, &b).unwrap();
-
-            assert_eq!(ans, ac);
+                for i in 0..m {
+                    for j in 0..n {
+                        let v = a[i][j] + b[i][j];
+                        assert_eq!(a_p_b[i][j], v);
+                        assert_eq!(a_mut[i][j], v);
+                    }
+                }
+            }
         }
     }
 }
